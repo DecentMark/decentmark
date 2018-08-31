@@ -17,6 +17,7 @@ def unit_list(request) -> HttpResponse:
     if request.user.is_staff:
         unit_list = Unit.objects.all().order_by('name')
     else:
+        # TODO: Filter by unit users
         unit_list = Unit.objects.filter(user=request.user).order_by('name')
 
     unit_count = unit_list.count()
