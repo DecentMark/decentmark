@@ -30,8 +30,9 @@ header nav{
   overflow:hidden;
 }
 
-#txt{
+#time-display{
    float:right;
    margin-top:-40px;
    padding : 0 10px 0 10px;
    font-size : 150%;
+}
