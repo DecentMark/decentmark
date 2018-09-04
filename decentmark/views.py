@@ -3,7 +3,8 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.shortcuts import render, reverse, redirect, get_object_or_404
 
-from decentmark.forms import UnitForm, AssignmentForm, SubmissionForm, FeedbackForm
+from decentmark.forms import UnitForm, AssignmentForm, SubmissionForm, FeedbackForm, \
+    UserForm, UnitUsersForm
 from decentmark.models import Unit, Assignment, Submission
 
 
@@ -18,7 +19,8 @@ def unit_list(request) -> HttpResponse:
         unit_list = Unit.objects.all().order_by('name')
     else:
         # TODO: Filter by unit users
-        unit_list = Unit.objects.filter(user=request.user).order_by('name')
+        unit_list = Unit.objects.all().order_by('name')
+        # unit_list = Unit.objects.filter(user=request.user).order_by('name')
 
     unit_count = unit_list.count()
 
@@ -92,6 +94,53 @@ def unit_view(request, unit_id=None) -> HttpResponse:
     }
 
     return render(request, 'decentmark/unit_view.html', context)
+
+
+@login_required
+def user_invite(request) -> HttpResponse:
+    """
+    User Invite - Invite a new User
+    """
+    if request.method == 'POST':
+        form = UserForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('decentmark:unit_list')
+        else:
+            for error in form.non_field_errors():
+                messages.error(request, error)
+    else:
+        form = UserForm()
+
+    return render(request, 'decentmark/user_invite.html', {'form': form})
+
+
+@login_required
+def unit_users_invite(request, unit_id=None) -> HttpResponse:
+    """
+    UnitUsers Invite - Invite a new UnitUsers
+    """
+    unit = get_object_or_404(Unit, id=unit_id)
+
+    if request.method == 'POST':
+        form = UnitUsersForm(request.POST)
+        if form.is_valid():
+            new_unit_users = form.save(commit=False)
+            new_unit_users.unit = unit
+            form.save()
+            return redirect('decentmark:unit_list')
+        else:
+            for error in form.non_field_errors():
+                messages.error(request, error)
+    else:
+        form = UnitUsersForm()
+
+    context = {
+        'form': form,
+        'unit': unit,
+    }
+
+    return render(request, 'decentmark/unit_users_invite.html', context)
 
 
 @login_required
