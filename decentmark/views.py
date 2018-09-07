@@ -1,5 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.db import IntegrityError
 from django.http import HttpResponse
 from django.shortcuts import render, reverse, redirect, get_object_or_404
 
@@ -104,7 +105,10 @@ def user_invite(request) -> HttpResponse:
     if request.method == 'POST':
         form = UserForm(request.POST)
         if form.is_valid():
-            form.save()
+            try:
+                form.save()
+            except IntegrityError as error:
+                pass
             return redirect('decentmark:unit_list')
         else:
             for error in form.non_field_errors():
