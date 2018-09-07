@@ -3,20 +3,25 @@
 {% block title %}{{ unit.name }} Assignments{% endblock %}
 
 {% block content %}
-    <h1>{{ unit.name }} Assignments</h1>
+    <div class="container">
 
-    <ul>
-    {% for assignment in assignment_list %}
-        <li>
-            <a href="{% url 'decentmark:assignment_view' assignment.id %}">{{ assignment.name }}</a>
-        </li>
-    {% endfor %}
-    </ul>
+        <h1>{{ unit.name }} Assignments</h1>
 
-    <div>
-    {% if user.is_staff %}
-        <a href="{% url 'decentmark:assignment_create' unit.id %}">Create new assignment</a>
-    {% endif %}
+        <ol type="1">
+        {% for assignment in assignment_list %}
+            <li class="well well-sm">
+                <a href="{% url 'decentmark:assignment_view' assignment.id %}">{{ assignment.name }}</a>
+            </li>
+        {% endfor %}
+        </ol>
+
+        <div>
+        {% if user.is_staff %}
+            <a href="{% url 'decentmark:assignment_create' unit.id %}" class="btn btn-primary">Create new assignment</a>
+        {% endif %}
+        </div>
+        <div>
+            <a href="{% url 'decentmark:unit_view' unit.id %}" class="btn btn-success">Unit Home</a>
+        </div>
     </div>
-    <a href="{% url 'decentmark:unit_view' unit.id %}">Unit Home</a>
 {% endblock %}

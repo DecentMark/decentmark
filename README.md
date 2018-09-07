@@ -11,3 +11,4 @@ Automatic grader for programming assignments.
 - [django](https://www.djangoproject.com/) the web framework and its examples
 - [gitignore.io](https://www.gitignore.io/)
 - [django-todo](https://github.com/shacker/django-todo) for its examples
+- [django-widget-tweaks](https://github.com/jazzband/django-widget-tweaks) for adding css to forms
