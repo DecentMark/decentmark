@@ -1,24 +1,23 @@
 {% extends "base.html" %}
 {% load static %}
-{% block head %}
-<link rel="stylesheet" href="{% static 'decentmark/base.css' %}" type="text/css" media="screen" />
-{% endblock %}
+{% block head %} {% endblock %}
 {% block title %}Unit List{% endblock %}
 
 {% block content %}
-    <h1>List of Units</h1>
+    <div class="container">
+        <h1>List of Units</h1>
+            <ol type="1">
+            {% for unit in unit_list %}
+                <li class="well well-sm">
+                    <a href="{% url 'decentmark:unit_view' unit.id %}">{{ unit.name }}</a>
+                </li>
+            {% endfor %}
+            </ol>
 
-    <ul>
-    {% for unit in unit_list %}
-        <li>
-            <a href="{% url 'decentmark:unit_view' unit.id %}">{{ unit.name }}</a>
-        </li>
-    {% endfor %}
-    </ul>
-
-    <div>
-    {% if user.is_staff %}
-        <a href="{% url 'decentmark:unit_create' %}">Create new unit</a>
-    {% endif %}
+            <div class = "position">
+                {% if user.is_staff %}
+                    <a href="{% url 'decentmark:unit_create' %}" class="btn btn-success">Create new unit</a>
+                {% endif %}
+            </div>
     </div>
 {% endblock %}

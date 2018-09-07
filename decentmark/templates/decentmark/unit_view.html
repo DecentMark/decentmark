@@ -3,11 +3,19 @@
 {% block title %}{{ unit.name }}{% endblock %}
 
 {% block content %}
-    <h1>{{ unit.name }}</h1>
-    <p>{{ unit.description }}</p>
-    <p><a href="{% url 'decentmark:assignment_list' unit.id %}">Assignments</a></p>
-    {% if user.is_staff %}
-    <p><a href="{% url 'decentmark:unit_edit' unit.id %}">Edit Unit</a></p>
-    {% endif %}
-    <p><a href="{% url 'decentmark:unit_list' %}">Return to Unit List</a></p>
+    <div class="container">
+         <div class="panel panel-info">
+             <div class="panel-heading">
+                <h3>{{ unit.name }}</h3>
+             </div>
+             <div class="panel-body">
+                <p>{{ unit.description }}</p>
+             </div>
+         </div>
+            <p><a href="{% url 'decentmark:assignment_list' unit.id %}" class="btn btn-primary">Assignments</a></p>
+            {% if user.is_staff %}
+            <p><a href="{% url 'decentmark:unit_edit' unit.id %}" class="btn btn-danger">Edit Unit</a></p>
+            {% endif %}
+            <p><a href="{% url 'decentmark:unit_list' %}" class="btn btn-success">Return to Unit List</a></p>
+    </div>
 {% endblock %}
