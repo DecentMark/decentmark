@@ -4,13 +4,20 @@
 
 {% block content %}
     <h1>{{ assignment.name }} Submissions</h1>
+        <table class="table table-bordered">
+            <thead>
+                <tr class="info">
+                    <th>Student Submission</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for submission in submission_list %}
+                    <tr>
+                        <td><a href="{% url 'decentmark:submission_view' submission.id %}">{{ submission.user.username }}</a></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
 
-    <ul>
-    {% for submission in submission_list %}
-        <li>
-            <a href="{% url 'decentmark:submission_view' submission.id %}">{{ submission.user.username }}</a>
-        </li>
-    {% endfor %}
-    </ul>
-    <a href="{% url 'decentmark:assignment_list' unit.id %}">Return to Assignments</a>
+        <a href="{% url 'decentmark:assignment_view' assignment.id %}" class="btn btn-info" role="button" aria-pressed="true">Return to Assignments</a>
 {% endblock %}
