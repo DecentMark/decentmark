@@ -3,29 +3,6 @@ from django.test import TestCase, LiveServerTestCase
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 
-from decentmark.models import Unit
-import datetime
-from django.core.exceptions import ValidationError
-
-
-
-# TODO: Fix this
-# class UnitModelTest(TestCase):
-#     def setUpTestData(cls):
-#         Unit.objects.create(name='Python')
-#
-#     def test_name_label(self):
-#         unit = Unit.objects.get()  # type: Unit
-#         field_label = unit._meta.get_field('name').verbose_name
-#         self.assertEquals(field_label, 'name')
-#         pass
-#
-#     def test_name_max_length(self):
-#         unit = Unit.objects.get()
-#         max_length = unit._meta.get_field('name').max_length
-#         self.assertEquals(max_length, 200)
-
-
 class UnitLiveTests(LiveServerTestCase):
     def setUp(self):
         User = get_user_model()
