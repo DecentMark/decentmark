@@ -9,14 +9,14 @@
             <p>{{ assignment.name }}</p>
         </div>
     <h4>Description</h4>
-        <div class="well well-lg">
-            <p>{{ assignment.description }}</p>
-        </div>
-            <a href="{% url 'decentmark:submission_create' assignment.id %}" class="btn btn-default" role="button" aria-pressed="true">Make a submission</a>
-            <a href="{% url 'decentmark:submission_list' assignment.id %}" class="btn btn-primary" role="button" aria-pressed="true">View Submissions</a>
-                {% if user.is_staff %}
-                    <a href="{% url 'decentmark:assignment_edit' assignment.id %}" class="btn btn-danger" role="button" aria-pressed="true">Edit Assignment</a>
-                {% endif %}
-            <a href="{% url 'decentmark:assignment_list' unit.id %}" class="btn btn-info" role="button" aria-pressed="true">Return to Assignment List</a>
+    <div class="well well-lg">
+        <p>{{ assignment.description }}</p>
+    </div>
+    <a href="{% url 'decentmark:submission_create' assignment.id %}" class="btn btn-default" role="button" aria-pressed="true">Make a submission</a>
+    <a href="{% url 'decentmark:submission_list' assignment.id %}" class="btn btn-primary" role="button" aria-pressed="true">View Submissions</a>
+    {% if user.is_staff %}
+        <a href="{% url 'decentmark:assignment_edit' assignment.id %}" class="btn btn-danger" role="button" aria-pressed="true">Edit Assignment</a>
+    {% endif %}
+    <a href="{% url 'decentmark:assignment_list' unit.id %}" class="btn btn-info" role="button" aria-pressed="true">Return to Assignment List</a>
 </div>
 {% endblock %}
