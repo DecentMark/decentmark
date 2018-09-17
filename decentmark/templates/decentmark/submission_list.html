@@ -8,12 +8,14 @@
             <thead>
                 <tr class="info">
                     <th>Student Submission</th>
+                    <th>Submitted on</th>
                 </tr>
             </thead>
             <tbody>
                 {% for submission in submission_list %}
                     <tr>
                         <td><a href="{% url 'decentmark:submission_view' submission.id %}">{{ submission.user.username }}</a></td>
+                        <td>{{ submission.date }}</td>
                     </tr>
                 {% endfor %}
             </tbody>
