@@ -4,8 +4,30 @@ from django.http import HttpResponse
 from django.shortcuts import render, reverse, redirect, get_object_or_404
 
 from decentmark.forms import UnitForm, AssignmentForm, SubmissionForm, FeedbackForm
-from decentmark.models import Unit, Assignment, Submission
+from decentmark.models import Unit, Assignment, Submission, AuditLog
 
+
+@login_required
+def audit_log(request, unit_id=None) -> HttpResponse:
+    """
+    Assignment List - List of assignments.
+    Staff see all assignments. Non-staff see open assignments.
+    """
+
+    unit = get_object_or_404(Unit, id=unit_id)
+
+    # TODO: Limit this to only teacher
+    log = AuditLog.objects.filter(unit=unit).order_by('date', 'id')
+
+    log_count = log.count()
+
+    context = {
+        "unit": unit,
+        "audit_log": log,
+        "audit_log_count": log_count,
+    }
+
+    return render(request, 'decentmark/audit_log.html', context)
 
 @login_required
 def unit_list(request) -> HttpResponse:
