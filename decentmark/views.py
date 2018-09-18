@@ -140,14 +140,6 @@ def get_users_info(file):
             'last name': last_name
         })
     return users
-#
-#
-# def validate_user_info(email):
-#     try:
-#         validate_email(email)
-#     except ValidationError:
-#         return False
-#     return True
 
 
 def get_user(email, first_name, last_name):
@@ -172,8 +164,14 @@ def get_user(email, first_name, last_name):
     return user
 
 
-def create_unit_user(user, unit):
-    unit_users = UnitUsers(user=user, unit=unit)
+def create_unit_user(user, unit, create, mark, submit):
+    unit_users = UnitUsers(
+        user=user,
+        unit=unit,
+        create=create,
+        mark=mark,
+        submit=submit
+    )
     unit_users.save()
     user.email_user(
         'unit invitation',
@@ -196,7 +194,13 @@ def unit_users_invite(request, unit=None) -> HttpResponse:
             for u in users:
                 user = get_user(u['email'], u['first name'], u['last name'])
                 if not UnitUsers.objects.all().filter(user=user, unit=unit).exists():
-                    create_unit_user(user, unit)
+                    create_unit_user(
+                        user,
+                        unit,
+                        form.cleaned_data['create'],
+                        form.cleaned_data['mark'],
+                        form.cleaned_data['submit']
+                    )
             return redirect('decentmark:unit_list')
         else:
             for error in form.non_field_errors():

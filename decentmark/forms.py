@@ -20,6 +20,9 @@ class UnitForm(ModelForm):
 
 class UnitUsersForm(Form):
     users = forms.FileField()
+    create = forms.BooleanField(required=False)
+    mark = forms.BooleanField(required=False)
+    submit = forms.BooleanField(required=False)
 
 
 class AssignmentForm(ModelForm):
