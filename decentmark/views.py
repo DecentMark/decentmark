@@ -4,6 +4,8 @@ import string
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
+from django.core.validators import validate_email, EmailValidator
 from django.http import HttpResponse
 from django.shortcuts import render, reverse, redirect, get_object_or_404
 
@@ -121,6 +123,18 @@ def unit_view(request, unit=None) -> HttpResponse:
     return render(request, 'decentmark/unit_view.html', context)
 
 
+def get_users_info(file):
+    return [line.decode("utf-8").strip() for line in file]
+
+
+def validate_user_info(email):
+    try:
+        validate_email(email)
+    except ValidationError:
+        return False
+    return True
+
+
 def get_user(email):
     # make username the email for now
     username = email
@@ -144,20 +158,22 @@ def unit_users_invite(request, unit=None) -> HttpResponse:
     """
 
     if request.method == 'POST':
-        form = UnitUsersForm(request.POST)
+        form = UnitUsersForm(request.POST, request.FILES)
         if form.is_valid():
-            email = form.cleaned_data['email']
-            user = get_user(email)
-            if UnitUsers.objects.all().filter(user=user, unit=unit).exists():
-                pass
-            else:
-                unit_users = UnitUsers(user=user, unit=unit)
-                unit_users.save()
-                user.email_user(
-                    'unit invitation',
-                    'welcome to %s' % unit,
-                    fail_silently=False
-                )
+            users = get_users_info(request.FILES['users'])
+            for u in users:
+                email = u
+                if not validate_user_info(email):
+                    continue
+                user = get_user(email)
+                if not UnitUsers.objects.all().filter(user=user, unit=unit).exists():
+                    unit_users = UnitUsers(user=user, unit=unit)
+                    unit_users.save()
+                    user.email_user(
+                        'unit invitation',
+                        'welcome to %s' % unit,
+                        fail_silently=False
+                    )
             return redirect('decentmark:unit_list')
         else:
             for error in form.non_field_errors():

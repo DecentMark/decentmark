@@ -19,7 +19,7 @@ class UnitForm(ModelForm):
 
 
 class UnitUsersForm(Form):
-    email = forms.EmailField()
+    users = forms.FileField()
 
 
 class AssignmentForm(ModelForm):
