@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}{{ unit.name }} Audit Log{% endblock %}
+
+{% block content %}
+    <div class="container">
+
+        <h1>{{ unit.name }} Audit Log</h1>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Date</th>
+                    <th scope="col">Message</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for entry in audit_log %}
+                <tr>
+                   <th scope="row">{{ entry.id }}</th>
+                   <td>{{ entry.date | date:"Y-m-d H:m:s" }}</td>
+                   <td>{{ entry.message }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        <div>
+            <a href="{% url 'decentmark:unit_view' unit.id %}" class="btn btn-success">Unit Home</a>
+        </div>
+    </div>
+{% endblock %}

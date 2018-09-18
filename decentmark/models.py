@@ -1,9 +1,9 @@
+from datetime import datetime as Datetime
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.timezone import now
 from django.utils.translation import ugettext_lazy as _
-
 
 class Profile(models.Model):
     user = models.OneToOneField(
@@ -30,6 +30,10 @@ class Unit(models.Model):
     def __str__(self):
         return self.name
 
+class AuditLog(models.Model):
+    date = models.DateTimeField(default=Datetime.now, blank=True)
+    unit = models.ForeignKey(Unit,on_delete=models.SET_NULL, default=None, blank=True, null=True)
+    message = models.TextField()
 
 class UnitUsers(models.Model):
     unit = models.ForeignKey(Unit, on_delete=models.CASCADE)
