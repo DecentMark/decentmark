@@ -6,14 +6,24 @@
 {% block content %}
     <div class="container">
         <h1>List of Units</h1>
-            <ol type="1">
-            {% for unit in unit_list %}
-                <li class="well well-sm">
-                    <a href="{% url 'decentmark:unit_view' unit.id %}">{{ unit.name }}</a>
-                </li>
-            {% endfor %}
-            </ol>
-
+            <table class="table table-bordered">
+                <thead>
+                    <tr class="info">
+                        <th>Name fo Unit</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for unit in unit_list %}
+                        <tr>
+                            <td><a href="{% url 'decentmark:unit_view' unit.id %}">{{ unit.name }}</a></td>
+                            <td><a>{{ unit.start }}</a></td>
+                            <td><a>{{ unit.end }}</a></td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
             <div class = "position">
                 {% if user.is_staff %}
                     <a href="{% url 'decentmark:unit_create' %}" class="btn btn-success">Create new unit</a>

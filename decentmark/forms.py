@@ -1,6 +1,8 @@
-from django.forms import ModelForm, DateField, DateInput
-
-from decentmark.models import Unit, Assignment, Submission
+import random
+import string
+from django.contrib.auth.models import User
+from django.forms import ModelForm, DateInput
+from decentmark.models import Unit, Assignment, Submission, UnitUsers
 
 
 class UnitForm(ModelForm):
@@ -16,6 +18,34 @@ class UnitForm(ModelForm):
             'start': DateInput(attrs={'type': 'date'}),
             'end': DateInput(attrs={'type': 'date'}),
         }
+
+
+class UserForm(ModelForm):
+    class Meta:
+        model = User
+        fields = (
+            'email',
+        )
+
+    def save(self, commit=True):
+        email = self.cleaned_data['email']
+        password = ''.join([random.choice(string.ascii_letters + string.digits) for n in range(8)])
+        user = User.objects.create_user(email, email=email, password=password)
+
+        # send email
+        subject = 'account creation'
+        message = 'username: %s\npassword %s' % (user.get_username(), password)
+        user.email_user(subject, message, fail_silently=False)
+
+        return user
+
+
+class UnitUsersForm(ModelForm):
+    class Meta:
+        model = UnitUsers
+        fields = (
+            'user',
+        )
 
 
 class AssignmentForm(ModelForm):

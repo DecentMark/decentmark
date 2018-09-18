@@ -12,3 +12,19 @@ DEBUG = True
 
 # SECURITY WARNING: Comment this out for production
 AUTH_PASSWORD_VALIDATORS = []
+
+
+# EMAIL SETTINGS
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'decentmarkapp@gmail.com'
+EMAIL_HOST_PASSWORD = 'decent123456'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+
+DEFAULT_FROM_EMAIL = 'no-reply <decentmarkapp@gmail.com>'
+
+ADMINS = (
+    ('You', 'decentmarkapp@gmail.com'),
+)
+
+MANAGERS = ADMINS

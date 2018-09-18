@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block title %}{{ unit.name }} Invite People {% endblock %}
+
+{% block content %}
+    <h1>Invite People</h1>
+
+    <form method="post" action="{% url 'decentmark:unit_users_invite' unit.id %}">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Add</button>
+    </form>
+{% endblock %}
