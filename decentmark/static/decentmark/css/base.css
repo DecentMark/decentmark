@@ -41,8 +41,11 @@ h1{
 }
 .logout{
     position: relative;
-    left : 1000px;
-    bottom :-20px;
+    left : 1100px;
+    bottom :-15px;
+}
+.headingcss{
+    text-decoration: none;
 }
 #time-display{
     float:right;

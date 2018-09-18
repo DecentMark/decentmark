@@ -33,9 +33,9 @@
         </div>
         <input type="submit" class="btn btn-primary" value="login">
         <input type="hidden" name="next" value="{{ next }}">
-            <div class="checkbox">
-                <label><input type="checkbox" name="remember"> Remember me</label>
-            </div>
+        <div class="checkbox">
+            <label><input type="checkbox" name="remember"> Remember me</label>
+        </div>
     </form>
     {# Assumes you setup the password_reset view in your URLconf #}
     <p><a href="{% url 'password_reset' %}">Lost password?</a></p>

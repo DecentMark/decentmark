@@ -17,7 +17,7 @@
 <header>
         <div class="container1">
             <div id="branding">
-                <a href="{% url 'decentmark:unit_list' %}">
+                <a class="headingcss" href="{% url 'decentmark:unit_list' %}">
                     <h1>Decent Mark </h1>
                 </a>
             </div>
@@ -27,6 +27,9 @@
 <body onload="startTime()">
     <main role="main">
         <div class="container">
+            <div class="logout">
+                <a href="{% url 'logout' %}" class="btn btn-danger">Logout</a>
+            </div>
                 {% if messages %}
                 <ul class="messages">
                     {% for message in messages %}
