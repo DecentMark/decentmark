@@ -124,31 +124,63 @@ def unit_view(request, unit=None) -> HttpResponse:
 
 
 def get_users_info(file):
-    return [line.decode("utf-8").strip() for line in file]
+    users = []
+    for line in file:
+        try:
+            email, first_name, last_name = line.decode('utf-8').strip().split(',')
+        except ValueError:
+            continue
+        try:
+            validate_email(email)
+        except ValidationError:
+            continue
+        users.append({
+            'email': email,
+            'first name': first_name,
+            'last name': last_name
+        })
+    return users
+#
+#
+# def validate_user_info(email):
+#     try:
+#         validate_email(email)
+#     except ValidationError:
+#         return False
+#     return True
 
 
-def validate_user_info(email):
-    try:
-        validate_email(email)
-    except ValidationError:
-        return False
-    return True
-
-
-def get_user(email):
+def get_user(email, first_name, last_name):
     # make username the email for now
     username = email
     try:
         user = User.objects.get(username=username)
     except User.DoesNotExist:
         password = ''.join([random.choice(string.ascii_letters + string.digits) for n in range(8)])
-        user = User.objects.create_user(username, email, password)
+        user = User.objects.create_user(
+            username,
+            email,
+            password,
+            first_name=first_name,
+            last_name=last_name
+        )
         user.email_user(
             'account creation',
             'username: %s\npassword: %s' % (user.get_username(), password),
             fail_silently=False
         )
     return user
+
+
+def create_unit_user(user, unit):
+    unit_users = UnitUsers(user=user, unit=unit)
+    unit_users.save()
+    user.email_user(
+        'unit invitation',
+        'welcome to %s' % unit,
+        fail_silently=False
+    )
+
 
 @login_required
 @model_object_required(Unit)
@@ -162,18 +194,9 @@ def unit_users_invite(request, unit=None) -> HttpResponse:
         if form.is_valid():
             users = get_users_info(request.FILES['users'])
             for u in users:
-                email = u
-                if not validate_user_info(email):
-                    continue
-                user = get_user(email)
+                user = get_user(u['email'], u['first name'], u['last name'])
                 if not UnitUsers.objects.all().filter(user=user, unit=unit).exists():
-                    unit_users = UnitUsers(user=user, unit=unit)
-                    unit_users.save()
-                    user.email_user(
-                        'unit invitation',
-                        'welcome to %s' % unit,
-                        fail_silently=False
-                    )
+                    create_unit_user(user, unit)
             return redirect('decentmark:unit_list')
         else:
             for error in form.non_field_errors():
