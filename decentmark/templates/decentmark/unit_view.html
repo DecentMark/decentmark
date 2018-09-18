@@ -4,18 +4,22 @@
 
 {% block content %}
     <div class="container">
-         <div class="panel panel-info">
-             <div class="panel-heading">
-                <h3>{{ unit.name }}</h3>
-             </div>
-             <div class="panel-body">
-                <p>{{ unit.description }}</p>
-             </div>
-         </div>
-            <p><a href="{% url 'decentmark:assignment_list' unit.id %}" class="btn btn-primary">Assignments</a></p>
+            <h4>Unit Name</h4>
+            <div class="well well-sm">
+            <p>{{ unit.name }}</p>
+            </div>
+            <h4>Description</h4>
+            <div class="well well-lg">
+            <p>{{ unit.description }}</p>
+            </div>
+
+            <a href="{% url 'decentmark:assignment_list' unit.id %}" class="btn btn-primary" role="button" aria-pressed="true">Assignments</a>
             {% if user.is_staff %}
-            <p><a href="{% url 'decentmark:unit_edit' unit.id %}" class="btn btn-danger">Edit Unit</a></p>
+            <a href="{% url 'decentmark:unit_edit' unit.id %}" class="btn btn-danger" role="button" aria-pressed="true">Edit Unit</a>
             {% endif %}
-            <p><a href="{% url 'decentmark:unit_list' %}" class="btn btn-success">Return to Unit List</a></p>
+            <a href="{% url 'decentmark:unit_list' %}" class="btn btn-info" role="button" aria-pressed="true">Return to Unit List</a>
+            {% if user.is_staff %}
+            <a href="{% url 'decentmark:audit_log' unit.id %}" class="btn btn-info" role="button" aria-pressed="true">View Audit Log</a>
+            {% endif %}
     </div>
 {% endblock %}
