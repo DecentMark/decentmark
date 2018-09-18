@@ -1,13 +1,16 @@
+import random
+import string
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.db import IntegrityError
+from django.contrib.auth.models import User
 from django.http import HttpResponse
 from django.shortcuts import render, reverse, redirect, get_object_or_404
 
 from decentmark.decorators import model_object_required
 from decentmark.forms import UnitForm, AssignmentForm, SubmissionForm, FeedbackForm, \
-    UserForm, UnitUsersForm
-from decentmark.models import Unit, Assignment, Submission, AuditLog
+    UnitUsersForm
+from decentmark.models import Unit, Assignment, Submission, AuditLog, UnitUsers
 
 
 @login_required
@@ -118,27 +121,20 @@ def unit_view(request, unit=None) -> HttpResponse:
     return render(request, 'decentmark/unit_view.html', context)
 
 
-@login_required
-def user_invite(request) -> HttpResponse:
-    """
-    User Invite - Invite a new User
-    """
-    if request.method == 'POST':
-        form = UserForm(request.POST)
-        if form.is_valid():
-            try:
-                form.save()
-            except IntegrityError as error:
-                pass
-            return redirect('decentmark:unit_list')
-        else:
-            for error in form.non_field_errors():
-                messages.error(request, error)
-    else:
-        form = UserForm()
-
-    return render(request, 'decentmark/user_invite.html', {'form': form})
-
+def get_user(email):
+    # make username the email for now
+    username = email
+    try:
+        user = User.objects.get(username=username)
+    except User.DoesNotExist:
+        password = ''.join([random.choice(string.ascii_letters + string.digits) for n in range(8)])
+        user = User.objects.create_user(username, email, password)
+        user.email_user(
+            'account creation',
+            'username: %s\npassword: %s' % (user.get_username(), password),
+            fail_silently=False
+        )
+    return user
 
 @login_required
 @model_object_required(Unit)
@@ -150,9 +146,18 @@ def unit_users_invite(request, unit=None) -> HttpResponse:
     if request.method == 'POST':
         form = UnitUsersForm(request.POST)
         if form.is_valid():
-            new_unit_users = form.save(commit=False)
-            new_unit_users.unit = unit
-            form.save()
+            email = form.cleaned_data['email']
+            user = get_user(email)
+            if UnitUsers.objects.all().filter(user=user, unit=unit).exists():
+                pass
+            else:
+                unit_users = UnitUsers(user=user, unit=unit)
+                unit_users.save()
+                user.email_user(
+                    'unit invitation',
+                    'welcome to %s' % unit,
+                    fail_silently=False
+                )
             return redirect('decentmark:unit_list')
         else:
             for error in form.non_field_errors():

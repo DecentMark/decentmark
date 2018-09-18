@@ -4,7 +4,6 @@ from decentmark import views
 app_name = 'decentmark'
 
 urlpatterns = [
-    path('invite/', views.user_invite, name='user_invite'),
     path('', views.unit_list, name='unit_list'),
     path('u/create/', views.unit_create, name='unit_create'),
     # Unit required
