@@ -17,10 +17,8 @@
             {% if user.is_staff %}
             <a href="{% url 'decentmark:unit_edit' unit.id %}" class="btn btn-danger" role="button" aria-pressed="true">Edit Unit</a>
             <a href="{% url 'decentmark:unit_users_invite' unit.id %}" class="btn btn-warning" role="button" aria-pressed="true">Invite a User</a>
+            <a href="{% url 'decentmark:audit_log' unit.id %}" class="btn btn-secondary" role="button" aria-pressed="true">View Audit Log</a>
             {% endif %}
             <a href="{% url 'decentmark:unit_list' %}" class="btn btn-info" role="button" aria-pressed="true">Return to Unit List</a>
-            {% if user.is_staff %}
-            <a href="{% url 'decentmark:audit_log' unit.id %}" class="btn btn-info" role="button" aria-pressed="true">View Audit Log</a>
-            {% endif %}
     </div>
 {% endblock %}
