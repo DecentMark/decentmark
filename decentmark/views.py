@@ -19,7 +19,7 @@ def audit_log(request, unit=None) -> HttpResponse:
     """
 
     # TODO: Limit this to only teacher
-    log = AuditLog.objects.filter(unit=unit).order_by('date', 'id')
+    log = AuditLog.objects.filter(unit=unit).order_by('-date', '-id')
 
     log_count = log.count()
 
@@ -208,6 +208,7 @@ def assignment_edit(request, assignment=None) -> HttpResponse:
         form = AssignmentForm(request.POST, instance=assignment)
         if form.is_valid():
             form.save()
+            AuditLog.objects.create(unit=unit, message="%s[%s] edited %s[%s]" % (request.user, request.user.pk, assignment, assignment.pk))
             return redirect(reverse('decentmark:assignment_list', args=(unit.id,)))
         else:
             for error in form.non_field_errors():
@@ -274,7 +275,7 @@ def submission_list(request, assignment=None) -> HttpResponse:
     Submission List - List of submissions.
     Staff see all submissions. Non-staff see their own submissions.
     """
-    unit = assignment.unitg
+    unit = assignment.unit
 
     # Staff
     if request.user.is_staff:
@@ -308,7 +309,8 @@ def submission_create(request, assignment=None) -> HttpResponse:
             new_submission = form.save(commit=False)
             new_submission.user = request.user
             new_submission.assignment = assignment
-            form.save()
+            submission = form.save()
+            AuditLog.objects.create(unit=unit, message="%s[%s] submitted %s[%s]" % (request.user, request.user.pk, submission, submission.pk))
             return redirect(reverse('decentmark:assignment_view', args=(assignment.id,)))
         else:
             for error in form.non_field_errors():
@@ -358,6 +360,7 @@ def submission_mark(request, submission=None) -> HttpResponse:
             feedback = form.save(commit=False)
             feedback.marked = True
             form.save()
+            AuditLog.objects.create(unit=unit, message="%s[%s] marked %s[%s]" % (request.user, request.user.pk, submission, submission.pk))
             return redirect(reverse('decentmark:submission_view', args=(submission.id,)))
         else:
             for error in form.non_field_errors():

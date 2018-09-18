@@ -18,7 +18,7 @@
             {% for entry in audit_log %}
                 <tr>
                    <th scope="row">{{ entry.id }}</th>
-                   <td>{{ entry.date }}</td>
+                   <td>{{ entry.date | date:"Y-m-d H:m:s" }}</td>
                    <td>{{ entry.message }}</td>
                 </tr>
             {% endfor %}
