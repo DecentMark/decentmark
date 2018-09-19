@@ -1,30 +1,32 @@
+from datetime import datetime as Datetime
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import PermissionDenied
 from django.db import IntegrityError
 from django.http import HttpResponse
 from django.shortcuts import render, reverse, redirect, get_object_or_404
 
-from decentmark.decorators import model_object_required
+from decentmark.decorators import model_object_required, unit_permissions_required, modify_request
 from decentmark.forms import UnitForm, AssignmentForm, SubmissionForm, FeedbackForm, \
     UserForm, UnitUsersForm
-from decentmark.models import Unit, Assignment, Submission, AuditLog
+from decentmark.models import Unit, Assignment, Submission, AuditLog, UnitUsers
 
 
 @login_required
 @model_object_required(Unit)
-def audit_log(request, unit=None) -> HttpResponse:
+@unit_permissions_required(lambda uu: uu.create)
+def audit_log(request) -> HttpResponse:
     """
-    Assignment List - List of assignments.
-    Staff see all assignments. Non-staff see open assignments.
+    Audit Log - Events recorded in the unit.
+    People with create permission can view this.
     """
 
-    # TODO: Limit this to only teacher
-    log = AuditLog.objects.filter(unit=unit).order_by('-date', '-id')
+    log = AuditLog.objects.filter(unit=request.unit).order_by('-date', '-id')
 
     log_count = log.count()
 
     context = {
-        "unit": unit,
+        "unit": request.unit,
         "audit_log": log,
         "audit_log_count": log_count,
     }
@@ -37,13 +39,10 @@ def unit_list(request) -> HttpResponse:
     Unit List - List of units. Staff see all units. Non-staff see units they are enrolled in.
     """
 
-    # Staff
-    if request.user.is_staff:
-        unit_list = Unit.objects.all().order_by('name')
-    else:
-        # TODO: Filter by unit users
-        unit_list = Unit.objects.all().order_by('name')
-        # unit_list = Unit.objects.filter(user=request.user).order_by('name')
+    # Get units they have access to
+    accessible_unit_ids = UnitUsers.objects.filter(user=request.user).values_list('unit__id', flat=True)
+    # Filter by those units
+    unit_list = Unit.objects.filter(id__in=accessible_unit_ids)
 
     unit_count = unit_list.count()
 
@@ -60,11 +59,17 @@ def unit_create(request) -> HttpResponse:
     """
     Unit Create - Create a new Unit
     """
+    # TODO: Use a permission for this
+    if not request.user.is_staff:
+        raise PermissionDenied("You need staff permission to create new units")
+
     if request.method == 'POST':
         form = UnitForm(request.POST)
         if form.is_valid():
-            form.save()
-            return redirect('decentmark:unit_list')
+            unit = form.save()
+            # Give all permissions to the creator of the unit
+            UnitUsers.objects.create(user=request.user, unit=unit, create=True, mark=True, submit=True)
+            return redirect(unit)
         else:
             for error in form.non_field_errors():
                 messages.error(request, error)
@@ -78,27 +83,29 @@ def unit_create(request) -> HttpResponse:
 
 @login_required
 @model_object_required(Unit)
-def unit_edit(request, unit=None) -> HttpResponse:
+@unit_permissions_required(lambda uu: uu.create)
+def unit_edit(request) -> HttpResponse:
     """
-    Unit Create - Create a new Unit
+    Unit Edit - Edit a Unit
+    Requires Create permission on the unit
     """
 
     if request.method == 'POST':
-        form = UnitForm(request.POST, instance=unit)
+        form = UnitForm(request.POST, instance=request.unit)
         if form.is_valid():
-            form.save()
-            return redirect('decentmark:unit_list')
+            unit = form.save()
+            return redirect(unit)
         else:
             for error in form.non_field_errors():
                 messages.error(request, error)
 
     # if a GET (or any other method) we'll create a blank form
     else:
-        form = UnitForm(instance=unit)
+        form = UnitForm(instance=request.unit)
 
     context = {
         'form': form,
-        'unit': unit,
+        'unit': request.unit,
     }
 
     return render(request, 'decentmark/unit_edit.html', context)
@@ -106,13 +113,14 @@ def unit_edit(request, unit=None) -> HttpResponse:
 
 @login_required()
 @model_object_required(Unit)
-def unit_view(request, unit=None) -> HttpResponse:
+@unit_permissions_required(lambda uu: True)
+def unit_view(request) -> HttpResponse:
     """
     Unit View - View unit details
     """
 
     context = {
-        "unit": unit,
+        "unit": request.unit,
     }
 
     return render(request, 'decentmark/unit_view.html', context)
@@ -123,6 +131,11 @@ def user_invite(request) -> HttpResponse:
     """
     User Invite - Invite a new User
     """
+
+    # TODO: Use a permission for this
+    if not request.user.is_staff:
+        raise PermissionDenied("You need staff permission to invite new members")
+
     if request.method == 'POST':
         form = UserForm(request.POST)
         if form.is_valid():
@@ -142,7 +155,8 @@ def user_invite(request) -> HttpResponse:
 
 @login_required
 @model_object_required(Unit)
-def unit_users_invite(request, unit=None) -> HttpResponse:
+@unit_permissions_required(lambda uu: uu.create)
+def unit_users_invite(request) -> HttpResponse:
     """
     UnitUsers Invite - Invite a new UnitUsers
     """
@@ -151,7 +165,7 @@ def unit_users_invite(request, unit=None) -> HttpResponse:
         form = UnitUsersForm(request.POST)
         if form.is_valid():
             new_unit_users = form.save(commit=False)
-            new_unit_users.unit = unit
+            new_unit_users.unit = request.unit
             form.save()
             return redirect('decentmark:unit_list')
         else:
@@ -162,7 +176,7 @@ def unit_users_invite(request, unit=None) -> HttpResponse:
 
     context = {
         'form': form,
-        'unit': unit,
+        'unit': request.unit,
     }
 
     return render(request, 'decentmark/unit_users_invite.html', context)
@@ -170,7 +184,8 @@ def unit_users_invite(request, unit=None) -> HttpResponse:
 
 @login_required
 @model_object_required(Unit)
-def assignment_create(request, unit=None) -> HttpResponse:
+@unit_permissions_required(lambda uu: uu.create)
+def assignment_create(request) -> HttpResponse:
     """
     Assignment Create - Create a new Assignment
     """
@@ -179,9 +194,9 @@ def assignment_create(request, unit=None) -> HttpResponse:
         form = AssignmentForm(request.POST)
         if form.is_valid():
             new_assignment = form.save(commit=False)
-            new_assignment.unit = unit
+            new_assignment.unit = request.unit
             form.save()
-            return redirect(reverse('decentmark:assignment_list', args=(unit.id,)))
+            return redirect(reverse('decentmark:assignment_list', args=(request.unit.id,)))
         else:
             for error in form.non_field_errors():
                 messages.error(request, error)
@@ -190,7 +205,7 @@ def assignment_create(request, unit=None) -> HttpResponse:
 
     context = {
         'form': form,
-        'unit': unit,
+        'unit': request.unit,
     }
 
     return render(request, 'decentmark/assignment_create.html', context)
@@ -198,53 +213,56 @@ def assignment_create(request, unit=None) -> HttpResponse:
 
 @login_required
 @model_object_required(Assignment)
-def assignment_edit(request, assignment=None) -> HttpResponse:
+@modify_request('unit', lambda r: r.unit)
+@unit_permissions_required(lambda uu: uu.create)
+def assignment_edit(request) -> HttpResponse:
     """
     Assignment Edit - Edit an existing Assignment
     """
-    unit = assignment.unit
 
     if request.method == 'POST':
-        form = AssignmentForm(request.POST, instance=assignment)
+        form = AssignmentForm(request.POST, instance=request.assignment)
         if form.is_valid():
             form.save()
-            AuditLog.objects.create(unit=unit, message="%s[%s] edited %s[%s]" % (request.user, request.user.pk, assignment, assignment.pk))
-            return redirect(reverse('decentmark:assignment_list', args=(unit.id,)))
+            AuditLog.objects.create(unit=request.unit, message="%s[%s] edited %s[%s]" % (request.user, request.user.pk, request.assignment, request.assignment.pk))
+            return redirect(reverse('decentmark:assignment_list', args=(request.unit.id,)))
         else:
             for error in form.non_field_errors():
                 messages.error(request, error)
     else:
-        form = AssignmentForm(instance=assignment)
+        form = AssignmentForm(instance=request.assignment)
 
     context = {
         'form': form,
-        'unit': unit,
-        'assignment': assignment,
+        'unit': request.unit,
+        'assignment': request.assignment,
     }
 
     return render(request, 'decentmark/assignment_edit.html', context)
 
 
 @login_required
-def assignment_list(request, unit_id=None) -> HttpResponse:
+@model_object_required(Unit)
+@unit_permissions_required(lambda uu: True)
+def assignment_list(request) -> HttpResponse:
     """
     Assignment List - List of assignments.
-    Staff see all assignments. Non-staff see open assignments.
+    All assignments are visible for now.
+    (Later?) Staff see all assignments. Non-staff see open assignments.
     """
 
-    unit = get_object_or_404(Unit, id=unit_id)
-
     # Staff
-    if request.user.is_staff:
-        assignment_list = Assignment.objects.filter(unit=unit).order_by('start')
-    else:
-        # TODO: Filter by start > today
-        assignment_list = Assignment.objects.filter(unit=unit).order_by('start')
+    # if request.unit_user.create or request.unit_user.mark:
+    assignment_list = Assignment.objects.filter(unit=request.unit).order_by('start')
+    # else:
+    #     # TODO: Filter by start > today
+    #     today = Datetime.today()
+    #     assignment_list = Assignment.objects.filter(unit=request.unit).filter(start__gte=today).order_by('start')
 
     assignment_count = assignment_list.count()
 
     context = {
-        "unit": unit,
+        "unit": request.unit,
         "assignment_list": assignment_list,
         "assignment_count": assignment_count,
     }
@@ -254,15 +272,18 @@ def assignment_list(request, unit_id=None) -> HttpResponse:
 
 @login_required()
 @model_object_required(Assignment)
-def assignment_view(request, assignment=None) -> HttpResponse:
+@modify_request('unit', lambda r: r.assignment.unit)
+@unit_permissions_required(lambda uu: True)
+def assignment_view(request) -> HttpResponse:
     """
     Assignment View - View assignment details
+    Anyone part of the unit can view an assignment
     """
-    unit = assignment.unit
+    # TODO: Restrictions?
 
     context = {
-        "unit": unit,
-        "assignment": assignment,
+        "unit": request.unit,
+        "assignment": request.assignment,
     }
 
     return render(request, 'decentmark/assignment_view.html', context)
@@ -270,23 +291,22 @@ def assignment_view(request, assignment=None) -> HttpResponse:
 
 @login_required
 @model_object_required(Assignment)
-def submission_list(request, assignment=None) -> HttpResponse:
+@modify_request('unit', lambda r: r.assignment.unit)
+@unit_permissions_required(lambda uu: True)
+def submission_list(request) -> HttpResponse:
     """
     Submission List - List of submissions.
-    Staff see all submissions. Non-staff see their own submissions.
+    Markers see all submissions. Otherwise only own submissions.
     """
-    unit = assignment.unit
 
-    # Staff
-    if request.user.is_staff:
-        submission_list = Submission.objects.filter(assignment=assignment).order_by('date')
+    if request.unit_user.mark:
+        submission_list = Submission.objects.filter(assignment=request.assignment).order_by('date')
     else:
-        # TODO: Filter by user = request.user
-        submission_list = Submission.objects.filter(assignment=assignment).order_by('date')
+        submission_list = Submission.objects.filter(assignment=request.assignment).filter(user=request.user).order_by('date')
 
     context = {
-        "unit": unit,
-        "assignment": assignment,
+        "unit": request.unit,
+        "assignment": request.assignment,
         "submission_list": submission_list,
     }
 
@@ -295,23 +315,23 @@ def submission_list(request, assignment=None) -> HttpResponse:
 
 @login_required
 @model_object_required(Assignment)
-def submission_create(request, assignment=None) -> HttpResponse:
+@modify_request('unit', lambda r: r.assignment.unit)
+@unit_permissions_required(lambda uu: uu.submit)
+def submission_create(request) -> HttpResponse:
     """
     Submission Create - Make a submission
     """
-    unit = assignment.unit
-
     if request.method == 'POST':
         form = SubmissionForm(request.POST, initial={
-            'assignment': assignment,
+            'assignment': request.assignment,
         })
         if form.is_valid():
             new_submission = form.save(commit=False)
             new_submission.user = request.user
-            new_submission.assignment = assignment
+            new_submission.assignment = request.assignment
             submission = form.save()
-            AuditLog.objects.create(unit=unit, message="%s[%s] submitted %s[%s]" % (request.user, request.user.pk, submission, submission.pk))
-            return redirect(reverse('decentmark:assignment_view', args=(assignment.id,)))
+            AuditLog.objects.create(unit=request.unit, message="%s[%s] submitted %s[%s]" % (request.user, request.user.pk, submission, submission.pk))
+            return redirect(reverse('decentmark:assignment_view', args=(request.assignment.id,)))
         else:
             for error in form.non_field_errors():
                 messages.error(request, error)
@@ -320,8 +340,8 @@ def submission_create(request, assignment=None) -> HttpResponse:
 
     context = {
         'form': form,
-        'unit': unit,
-        'assignment': assignment,
+        'unit': request.unit,
+        'assignment': request.assignment,
     }
 
     return render(request, 'decentmark/submission_create.html', context)
@@ -329,17 +349,22 @@ def submission_create(request, assignment=None) -> HttpResponse:
 
 @login_required()
 @model_object_required(Submission)
-def submission_view(request, submission=None) -> HttpResponse:
+@modify_request('assignment', lambda r: r.submission.assignment)
+@modify_request('unit', lambda r: r.assignment.unit)
+@unit_permissions_required(lambda uu: True)
+def submission_view(request) -> HttpResponse:
     """
     Submission View - View submission details
+    Can view a submission if a marker, or owner of the submission
     """
-    assignment = submission.assignment
-    unit = assignment.unit
+
+    if not request.unit_user.mark and request.user != request.submission.user:
+        raise PermissionDenied
 
     context = {
-        "unit": unit,
-        "assignment": assignment,
-        "submission": submission,
+        "unit": request.unit,
+        "assignment": request.assignment,
+        "submission": request.submission,
     }
 
     return render(request, 'decentmark/submission_view.html', context)
@@ -347,32 +372,33 @@ def submission_view(request, submission=None) -> HttpResponse:
 
 @login_required
 @model_object_required(Submission)
-def submission_mark(request, submission=None) -> HttpResponse:
+@modify_request('assignment', lambda r: r.submission.assignment)
+@modify_request('unit', lambda r: r.assignment.unit)
+@unit_permissions_required(lambda uu: uu.mark)
+def submission_mark(request) -> HttpResponse:
     """
     Submission Mark - Mark a submission
     """
-    assignment = submission.assignment
-    unit = assignment.unit
 
     if request.method == 'POST':
-        form = FeedbackForm(request.POST, instance=submission)
+        form = FeedbackForm(request.POST, instance=request.submission)
         if form.is_valid():
             feedback = form.save(commit=False)
             feedback.marked = True
-            form.save()
-            AuditLog.objects.create(unit=unit, message="%s[%s] marked %s[%s]" % (request.user, request.user.pk, submission, submission.pk))
-            return redirect(reverse('decentmark:submission_view', args=(submission.id,)))
+            feedback = form.save()
+            AuditLog.objects.create(unit=request.unit, message="%s[%s] marked %s[%s]" % (request.user, request.user.pk, request.submission, request.submission.pk))
+            return redirect(feedback)
         else:
             for error in form.non_field_errors():
                 messages.error(request, error)
     else:
-        form = FeedbackForm(instance=submission)
+        form = FeedbackForm(instance=request.submission)
 
     context = {
         'form': form,
-        'unit': unit,
-        'assignment': assignment,
-        'submission': submission,
+        'unit': request.unit,
+        'assignment': request.assignment,
+        'submission': request.submission,
     }
 
     return render(request, 'decentmark/submission_mark.html', context)

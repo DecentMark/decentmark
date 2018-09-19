@@ -2,6 +2,7 @@ from datetime import datetime as Datetime
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.urls import reverse
 from django.utils.timezone import now
 from django.utils.translation import ugettext_lazy as _
 
@@ -29,6 +30,9 @@ class Unit(models.Model):
 
     def __str__(self):
         return self.name
+
+    def get_absolute_url(self):
+        return reverse('unit_view', kwargs={'unit_id': self.pk})
 
 class AuditLog(models.Model):
     date = models.DateTimeField(default=Datetime.now, blank=True)
@@ -86,6 +90,9 @@ class Assignment(models.Model):
     def __str__(self):
         return str(self.unit) + " - " + str(self.name)
 
+    def get_absolute_url(self):
+        return reverse('assignment_view', kwargs={'assignment_id': self.pk})
+
 
 class Submission(models.Model):
     assignment = models.ForeignKey(Assignment, on_delete=models.CASCADE)
@@ -110,3 +117,6 @@ class Submission(models.Model):
 
     def __str__(self):
         return str(self.assignment) + " - " + str(self.user)
+
+    def get_absolute_url(self):
+        return reverse('submission_view', kwargs={'submission_id': self.pk})
