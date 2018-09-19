@@ -167,7 +167,7 @@ def unit_users_invite(request) -> HttpResponse:
             new_unit_users = form.save(commit=False)
             new_unit_users.unit = request.unit
             form.save()
-            return redirect('decentmark:unit_list')
+            return redirect(request.unit)
         else:
             for error in form.non_field_errors():
                 messages.error(request, error)
@@ -193,10 +193,10 @@ def assignment_create(request) -> HttpResponse:
     if request.method == 'POST':
         form = AssignmentForm(request.POST)
         if form.is_valid():
-            new_assignment = form.save(commit=False)
-            new_assignment.unit = request.unit
-            form.save()
-            return redirect(reverse('decentmark:assignment_list', args=(request.unit.id,)))
+            assignment = form.save(commit=False)
+            assignment.unit = request.unit
+            assignment = form.save()
+            return redirect(assignment)
         else:
             for error in form.non_field_errors():
                 messages.error(request, error)
@@ -223,9 +223,9 @@ def assignment_edit(request) -> HttpResponse:
     if request.method == 'POST':
         form = AssignmentForm(request.POST, instance=request.assignment)
         if form.is_valid():
-            form.save()
+            assignment = form.save()
             AuditLog.objects.create(unit=request.unit, message="%s[%s] edited %s[%s]" % (request.user, request.user.pk, request.assignment, request.assignment.pk))
-            return redirect(reverse('decentmark:assignment_list', args=(request.unit.id,)))
+            return redirect(assignment)
         else:
             for error in form.non_field_errors():
                 messages.error(request, error)
@@ -326,12 +326,12 @@ def submission_create(request) -> HttpResponse:
             'assignment': request.assignment,
         })
         if form.is_valid():
-            new_submission = form.save(commit=False)
-            new_submission.user = request.user
-            new_submission.assignment = request.assignment
+            submission = form.save(commit=False)
+            submission.user = request.user
+            submission.assignment = request.assignment
             submission = form.save()
             AuditLog.objects.create(unit=request.unit, message="%s[%s] submitted %s[%s]" % (request.user, request.user.pk, submission, submission.pk))
-            return redirect(reverse('decentmark:assignment_view', args=(request.assignment.id,)))
+            return redirect(submission)
         else:
             for error in form.non_field_errors():
                 messages.error(request, error)
