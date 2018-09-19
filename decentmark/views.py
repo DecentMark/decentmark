@@ -213,7 +213,7 @@ def assignment_create(request) -> HttpResponse:
 
 @login_required
 @model_object_required(Assignment)
-@modify_request('unit', lambda r: r.unit)
+@modify_request('unit', lambda r: r.assignment.unit)
 @unit_permissions_required(lambda uu: uu.create)
 def assignment_edit(request) -> HttpResponse:
     """
