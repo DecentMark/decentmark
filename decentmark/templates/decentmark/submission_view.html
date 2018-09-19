@@ -38,7 +38,7 @@
                 </div>
                     <p>Submission has not been marked</p>
             {% endif %}
-                {% if user.is_staff %}
+                {% if request.unit_user.mark %}
                     <p><a href="{% url 'decentmark:submission_mark' submission.id %}" class="btn btn-dark" role="button" aria-pressed="true">Mark this submission</a></p>
                 {% endif %}
         <p><a href="{% url 'decentmark:submission_list' assignment.id %}" class="btn btn-info" role="button" aria-pressed="true">Return to Submissions</a></p>
