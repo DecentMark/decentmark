@@ -14,11 +14,11 @@
             </div>
 
             <a href="{% url 'decentmark:assignment_list' unit.id %}" class="btn btn-primary" role="button" aria-pressed="true">Assignments</a>
-            {% if user.is_staff %}
+            {% if request.unit_user.create %}
             <a href="{% url 'decentmark:unit_edit' unit.id %}" class="btn btn-danger" role="button" aria-pressed="true">Edit Unit</a>
             {% endif %}
             <a href="{% url 'decentmark:unit_list' %}" class="btn btn-info" role="button" aria-pressed="true">Return to Unit List</a>
-            {% if user.is_staff %}
+            {% if request.unit_user.create %}
             <a href="{% url 'decentmark:audit_log' unit.id %}" class="btn btn-info" role="button" aria-pressed="true">View Audit Log</a>
             {% endif %}
     </div>
