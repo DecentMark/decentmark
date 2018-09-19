@@ -32,7 +32,7 @@ class Unit(models.Model):
         return self.name
 
     def get_absolute_url(self):
-        return reverse('unit_view', kwargs={'unit_id': self.pk})
+        return reverse('decentmark:unit_view', kwargs={'unit_id': self.pk})
 
 class AuditLog(models.Model):
     date = models.DateTimeField(default=Datetime.now, blank=True)
@@ -91,7 +91,7 @@ class Assignment(models.Model):
         return str(self.unit) + " - " + str(self.name)
 
     def get_absolute_url(self):
-        return reverse('assignment_view', kwargs={'assignment_id': self.pk})
+        return reverse('decentmark:assignment_view', kwargs={'assignment_id': self.pk})
 
 
 class Submission(models.Model):
@@ -119,4 +119,4 @@ class Submission(models.Model):
         return str(self.assignment) + " - " + str(self.user)
 
     def get_absolute_url(self):
-        return reverse('submission_view', kwargs={'submission_id': self.pk})
+        return reverse('decentmark:submission_view', kwargs={'submission_id': self.pk})
