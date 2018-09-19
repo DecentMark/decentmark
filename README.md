@@ -7,6 +7,10 @@ Automatic grader for programming assignments.
 - cp decentsite/local_settings_example.py decentsite/local_settings.py
 - python manage.py runserver --settings decentsite.local_settings
 
+## Testing
+- Download Selenium driver for your OS and add it to the path environment variable.
+- python manage.py test
+
 ## References
 - [django](https://www.djangoproject.com/) the web framework and its examples
 - [gitignore.io](https://www.gitignore.io/)
