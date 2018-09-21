@@ -26,7 +26,7 @@
             </table>
 
             <div>
-                {% if user.is_staff %}
+                {% if request.unit_user.create %}
                     <a href="{% url 'decentmark:assignment_create' unit.id %}" class="btn btn-primary">Create new assignment</a>
                 {% endif %}
             </div>
