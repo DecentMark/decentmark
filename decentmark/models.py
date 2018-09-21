@@ -78,7 +78,7 @@ class Assignment(models.Model):
     deleted = models.BooleanField(default=False)
 
     def clean(self):
-        if self.end <= self.start:
+        if self.end and self.start and self.end <= self.start:
             raise ValidationError({
                 'end': _('End date should be after start date')
             })
@@ -88,7 +88,7 @@ class Assignment(models.Model):
             })
 
     def __str__(self):
-        return str(self.unit) + " - " + str(self.name)
+        return str(self.unit)+" - "+str(self.name)
 
     def get_absolute_url(self):
         return reverse('decentmark:assignment_view', kwargs={'assignment_id': self.pk})
