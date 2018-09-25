@@ -17,8 +17,8 @@
 <header>
         <div class="container1">
             <div id="branding">
-                <a class="headingcss" href="{% url 'decentmark:unit_list' %}">
-                    <h1>Decent Mark </h1>
+                <a class="navbar-brand" href="{% url 'decentmark:unit_list' %}">
+                    <h1 >Decent Mark </h1>
                 </a>
             </div>
         </div>
@@ -26,12 +26,19 @@
 </header>
 <body onload="startTime()">
     <main role="main">
-        <div class="container">
-            <div class="logout">
-                {% if user.is_authenticated %}
-                    <a href="{% url 'logout' %}" class="btn btn-danger">Logout</a>
-                {% endif %}
+         {% if user.is_authenticated %}
+            <div class="container">
+                  <ol class="breadcrumb">
+                      <li><a href="{% url 'decentmark:unit_list' %}">Home</a></li>
+                      {% block unit_view_link %}
+                      {% endblock %}
+                  </ol>
+                  <div class="logout">
+                  <a href="{% url 'logout' %}"><span class="glyphicon glyphicon-log-out"></span> LogOut</a>
+                  </div>
             </div>
+         {% endif %}
+        <div class="container">
                 {% if messages %}
                 <ul class="messages">
                     {% for message in messages %}
