@@ -130,6 +130,27 @@ def unit_view(request) -> HttpResponse:
     return render(request, 'decentmark/unit_view.html', context)
 
 
+@login_required
+@model_object_required(Unit)
+@unit_permissions_required(lambda uu: True)
+def people_list(request) -> HttpResponse:
+    """
+    People List - List of UnitUsers.
+    """
+
+    people_list = UnitUsers.objects.filter(unit=request.unit)
+
+    people_count = people_list.count()
+
+    context = {
+        "unit": request.unit,
+        "people_list": people_list,
+        "people_count": people_count,
+    }
+
+    return render(request, 'decentmark/people_list.html', context)
+
+
 def get_users_info(file):
     users = []
     for line in file:
@@ -192,7 +213,7 @@ def create_unit_user(user, unit, create, mark, submit):
 @unit_permissions_required(lambda uu: uu.create)
 def unit_users_invite(request) -> HttpResponse:
     """
-    UnitUsers Invite - Invite a new UnitUsers
+    UnitUsers Invite - Invite new UnitUsers
     """
 
     if request.method == 'POST':
