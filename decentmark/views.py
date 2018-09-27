@@ -5,6 +5,7 @@ from django.shortcuts import render, reverse, redirect, get_object_or_404
 
 from decentmark.forms import UnitForm, AssignmentForm, SubmissionForm, FeedbackForm
 from decentmark.models import Unit, Assignment, Submission
+from marker import tasks
 
 
 @login_required
@@ -236,6 +237,7 @@ def submission_create(request, assignment_id=None) -> HttpResponse:
             new_submission.user = request.user
             new_submission.assignment = assignment
             form.save()
+            tasks.automatic_feedback(new_submission)
             return redirect(reverse('decentmark:assignment_view', args=(assignment.id,)))
         else:
             for error in form.non_field_errors():
