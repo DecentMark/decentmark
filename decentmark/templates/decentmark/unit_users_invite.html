@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 
+{% load widget_tweaks %}
+
 {% block title %}{{ unit.name }} Invite People {% endblock %}
 
 {% block content %}
@@ -9,5 +11,6 @@
         {% csrf_token %}
         {{ form.as_p }}
         <button type="submit">Submit</button>
+>>>>>>> dev
     </form>
 {% endblock %}
