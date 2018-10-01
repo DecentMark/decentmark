@@ -98,7 +98,7 @@ class SubmissionTest(TestCase):
                                                end='2018-10-25 14:30:59', description='111', attempts=1, total=0,
                                                test='we', solution='Answer', template='Template', deleted='False')
         Submission.objects.create(assignment=assignment, user=user, date='2018-10-28 14:30:59', solution='Answer',
-                                  marked='False', mark=10, feedback='Good')
+                                  automark=10, mark=10, feedback='Good')
 
     def test_mark(self):
         mark = Submission(mark=0)
