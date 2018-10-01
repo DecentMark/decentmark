@@ -1,6 +1,7 @@
 from datetime import datetime as Datetime
 from django.conf import settings
 from django.core.exceptions import ValidationError
+from django.core.validators import MinValueValidator
 from django.db import models
 from django.urls import reverse
 from django.utils.timezone import now
@@ -93,23 +94,24 @@ class Assignment(models.Model):
     def get_absolute_url(self):
         return reverse('decentmark:assignment_view', kwargs={'assignment_id': self.pk})
 
-
 class Submission(models.Model):
     assignment = models.ForeignKey(Assignment, on_delete=models.CASCADE)
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
                              on_delete=models.CASCADE)
     date = models.DateTimeField(default=now, blank=True)
     solution = models.TextField()
-    marked = models.BooleanField(default=False)
-    mark = models.IntegerField(default=-1)
+    automark = models.IntegerField(default=-1, validators=[MinValueValidator(-1)])
+    autofeedback = models.TextField(default="", blank=True)
+    mark = models.IntegerField(default=-1, validators=[MinValueValidator(-1)])
     feedback = models.TextField(default="", blank=True)
 
     def clean(self):
-        if self.marked:
-            if self.mark < 0:
+        if self.automark >= 0:
+            if self.automark > self.assignment.total:
                 raise ValidationError({
-                    'mark': _('Mark should be greater than or equal to zero')
+                    'mark': _('Mark should be less than or equal to the assignment Total Mark')
                 })
+        if self.mark >= 0:
             if self.mark > self.assignment.total:
                 raise ValidationError({
                     'mark': _('Mark should be less than or equal to the assignment Total Mark')

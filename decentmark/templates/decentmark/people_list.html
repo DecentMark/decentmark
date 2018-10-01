@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+ {% block title %}{{ unit.name }} People {% endblock %}
+
+ {% block content %}
+     <h1>{{ unit.name }} People </h1>
+
+     <ul>
+     {% for people in people_list %}
+         <li>
+              {{ people.user }} {{ people.user.create }} {{ people.user.mark }} {{ people.user.submit }}
+         </li>
+     {% endfor %}
+     </ul>
+
+ {% endblock %}

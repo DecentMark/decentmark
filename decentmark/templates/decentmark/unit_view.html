@@ -1,6 +1,9 @@
 {% extends "base.html" %}
 
 {% block title %}{{ unit.name }}{% endblock %}
+{% block unit_view_link %}
+<li class="breadcrumb-item active"><a href="{% url 'decentmark:unit_view' unit.id %}">{{ unit.name }}</a></li>
+{% endblock %}
 
 {% block content %}
     <div class="container">
@@ -13,13 +16,12 @@
             <p>{{ unit.description }}</p>
             </div>
 
-            <a href="{% url 'decentmark:assignment_list' unit.id %}" class="btn btn-primary" role="button" aria-pressed="true">Assignments</a>
+            <a href="{% url 'decentmark:assignment_list' unit.id %}" class="btn btn-primary" role="button" aria-pressed="true"> View Assignments</a>
             {% if request.unit_user.create %}
             <a href="{% url 'decentmark:unit_edit' unit.id %}" class="btn btn-danger" role="button" aria-pressed="true">Edit Unit</a>
+            <a href="{% url 'decentmark:unit_users_invite' unit.id %}" class="btn btn-warning" role="button" aria-pressed="true">Invite a User</a>
+            <a href="{% url 'decentmark:audit_log' unit.id %}" class="btn btn-secondary" role="button" aria-pressed="true">View Audit Log</a>
             {% endif %}
             <a href="{% url 'decentmark:unit_list' %}" class="btn btn-info" role="button" aria-pressed="true">Return to Unit List</a>
-            {% if request.unit_user.create %}
-            <a href="{% url 'decentmark:audit_log' unit.id %}" class="btn btn-info" role="button" aria-pressed="true">View Audit Log</a>
-            {% endif %}
     </div>
 {% endblock %}
