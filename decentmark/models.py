@@ -101,6 +101,7 @@ class Submission(models.Model):
     date = models.DateTimeField(default=now, blank=True)
     solution = models.TextField()
     automark = models.IntegerField(default=-1, validators=[MinValueValidator(-1)])
+    autofeedback = models.TextField(default="", blank=True)
     mark = models.IntegerField(default=-1, validators=[MinValueValidator(-1)])
     feedback = models.TextField(default="", blank=True)
 
