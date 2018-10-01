@@ -5,9 +5,9 @@
 {% block content %}
     <h1>Invite People</h1>
 
-    <form method="post" action="{% url 'decentmark:unit_users_invite' unit.id %}">
+    <form enctype="multipart/form-data" method="post" action="{% url 'decentmark:unit_users_invite' unit.id %}">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit">Add</button>
+        <button type="submit">Submit</button>
     </form>
 {% endblock %}
