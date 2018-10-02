@@ -29,7 +29,6 @@
             <div class = "position">
                 {% if user.is_staff %}
                     <a href="{% url 'decentmark:unit_create' %}" class="btn btn-success">Create new unit</a>
-                    <a href="{% url 'decentmark:user_invite' %}" class="btn btn-warning">Invite a user</a>
                 {% endif %}
             </div>
     </div>

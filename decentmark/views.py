@@ -63,9 +63,9 @@ def unit_create(request) -> HttpResponse:
     """
     Unit Create - Create a new Unit
     """
-    # TODO: Use a permission for this
-    if not request.user.is_staff:
-        raise PermissionDenied("You need staff permission to create new units")
+    # # TODO: Use a permission for this
+    # if not request.user.is_staff:
+    #     raise PermissionDenied("You need staff permission to create new units")
 
     if request.method == 'POST':
         form = UnitForm(request.POST)
