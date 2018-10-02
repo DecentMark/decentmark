@@ -448,7 +448,6 @@ def submission_mark(request) -> HttpResponse:
         form = FeedbackForm(request.POST, instance=request.submission)
         if form.is_valid():
             feedback = form.save(commit=False)
-            feedback.marked = True
             feedback = form.save()
             AuditLog.objects.create(unit=request.unit, message="%s[%s] marked %s[%s]" % (request.user, request.user.pk, request.submission, request.submission.pk))
             return redirect(feedback)

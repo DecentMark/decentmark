@@ -61,10 +61,16 @@ class FeedbackForm(ModelForm):
         model = Submission
         fields = (
             'solution',
+            'automark',
             'mark',
+            'autofeedback',
             'feedback',
         )
 
     def __init__(self, *args, **kwargs):
         super(FeedbackForm, self).__init__(*args, **kwargs)
         self.fields['solution'].disabled = True
+        self.fields['automark'].disabled = True
+        self.fields['autofeedback'].disabled = True
+
+
