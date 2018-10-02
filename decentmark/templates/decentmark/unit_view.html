@@ -1,13 +1,27 @@
 {% extends "base.html" %}
 
 {% block title %}{{ unit.name }}{% endblock %}
+{% block unit_view_link %}
+<li class="breadcrumb-item active"><a href="{% url 'decentmark:unit_view' unit.id %}">{{ unit.name }}</a></li>
+{% endblock %}
 
 {% block content %}
-    <h1>{{ unit.name }}</h1>
-    <p>{{ unit.description }}</p>
-    <p><a href="{% url 'decentmark:assignment_list' unit.id %}">Assignments</a></p>
-    {% if user.is_staff %}
-    <p><a href="{% url 'decentmark:unit_edit' unit.id %}">Edit Unit</a></p>
-    {% endif %}
-    <p><a href="{% url 'decentmark:unit_list' %}">Return to Unit List</a></p>
+    <div class="container">
+            <h4>Unit Name</h4>
+            <div class="well well-sm">
+            <p>{{ unit.name }}</p>
+            </div>
+            <h4>Description</h4>
+            <div class="well well-lg">
+            <p>{{ unit.description }}</p>
+            </div>
+
+            <a href="{% url 'decentmark:assignment_list' unit.id %}" class="btn btn-primary" role="button" aria-pressed="true"> View Assignments</a>
+            {% if request.unit_user.create %}
+            <a href="{% url 'decentmark:unit_edit' unit.id %}" class="btn btn-danger" role="button" aria-pressed="true">Edit Unit</a>
+            <a href="{% url 'decentmark:unit_users_invite' unit.id %}" class="btn btn-warning" role="button" aria-pressed="true">Invite a User</a>
+            <a href="{% url 'decentmark:audit_log' unit.id %}" class="btn btn-secondary" role="button" aria-pressed="true">View Audit Log</a>
+            {% endif %}
+            <a href="{% url 'decentmark:unit_list' %}" class="btn btn-info" role="button" aria-pressed="true">Return to Unit List</a>
+    </div>
 {% endblock %}

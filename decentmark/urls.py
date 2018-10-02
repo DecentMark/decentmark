@@ -9,9 +9,9 @@ urlpatterns = [
     # Unit required
     path('u/<int:unit_id>/', views.unit_view, name='unit_view'),
     path('u/<int:unit_id>/edit/', views.unit_edit, name='unit_edit'),
-    # path('u/<int:unit_id>/people/', views.people_list, name='people_list'),
-    # path('u/<int:unit_id>/invite/', views.people_invite, name='people_invite'),
-    # path('u/<int:unit_id>/log/', views.audit_log, name='audit_log'),
+    path('u/<int:unit_id>/people/', views.people_list, name='people_list'),
+    path('u/<int:unit_id>/invite/', views.unit_users_invite, name='unit_users_invite'),
+    path('u/<int:unit_id>/log/', views.audit_log, name='audit_log'),
     path('u/<int:unit_id>/create_assignment/', views.assignment_create, name='assignment_create'),
     path('u/<int:unit_id>/assignments/', views.assignment_list, name='assignment_list'),
     # Assignment required

@@ -3,23 +3,53 @@
 {% block title %}{{ unit.name }} - {{ assignment.name }} - {{ submission.user.username }}{% endblock %}
 
 {% block content %}
-    <h1>{{ assignment.name }} by {{ submission.user.username }}</h1>
-    <p>Submitted on {{ submission.date }}</p>
-    <pre>{{ submission.solution }}</pre>
-    {% if submission.marked %}
-    <p>{{ submission.mark}} / {{ assignment.total }}</p>
-    <div>
-        {% if submission.feedback %}
-        <p>{{ submission.feedback }}</p>
-        {% else %}
-        <p>No feedback has been given.</p>
-        {% endif %}
-        {% else %}
+    <div class="container">
+        <h1>{{ assignment.name }} by {{ submission.user.username }}</h1>
+            <table class="table table-bordered">
+                <tr>
+                    <th>Name of Person</th>
+                    <td>{{ submission.user.username }}</td>
+                </tr>
+                <tr>
+                    <th>Submitted on</th>
+                    <td>{{ submission.date }}</td>
+                </tr>
+                <tr>
+                    <th>Submitted solution</th>
+                    <td>{{ submission.solution }}</td>
+                </tr>
+                <tr>
+                    <th>AutoMark</th>
+                    <td>{{ submission.automark}} / {{ assignment.total }}</td>
+                </tr>
+                <tr>
+                    <th>AutoFeedback</th>
+                    <td>{{ submission.autofeedback }}</td>
+                </tr>
+                <tr>
+                    <th>Marks</th>
+                    <td>{{ submission.mark}} / {{ assignment.total }}</td>
+                </tr>
+                <tr>
+                    <th>Feedback</th>
+                    <td>{{ submission.feedback }}</td>
+                </tr>
+
+            </table>
+
+                {% if submission.mark != -1 %}
+                    <div>
+                        {% if submission.feedback %}
+                            {% else %}
+                                <p>No feedback has been given.</p>
+                            {% endif %}
+                        {% else %}
+                    </div>
+                        <p>Submission has not been marked</p>
+                {% endif %}
+                    {% if request.unit_user.mark %}
+                        <p><a href="{% url 'decentmark:submission_mark' submission.id %}" class="btn btn-warning" role="button" aria-pressed="true">Mark this submission</a></p>
+                    {% endif %}
+                        <p><a href="{% url 'decentmark:submission_list' assignment.id %}" class="btn btn-info" role="button" aria-pressed="true">Return to Submissions</a></p>
     </div>
-    <p>Submission has not been marked</p>
-    {% endif %}
-    {% if user.is_staff %}
-        <p><a href="{% url 'decentmark:submission_mark' submission.id %}">Mark this submission</a></p>
-    {% endif %}
-    <p><a href="{% url 'decentmark:submission_list' assignment.id %}">Return to Submissions</a></p>
 {% endblock %}

@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 
+{% load widget_tweaks %}
+
 {% block title %}{{ unit.name }} - {{ assignment.name }} - {{ submissions.user.name }}{% endblock %}
 
 {% block content %}
@@ -7,7 +9,34 @@
 
     <form method="post" action="{% url 'decentmark:submission_mark' submission.id %}">
         {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Submit</button>
+        <div class="form-group">
+            {{ form.solution.errors }}
+            <label for="{{ form.solution.id_for_label }}">Solution:</label>
+            {% render_field form.solution class+="form-control" placeholder=form.solution.label %}
+        </div>
+        <div class="form-group">
+            {{ form.automark.errors }}
+            <label for="{{ form.automark.id_for_label }}">AutoMark:</label>
+            {% render_field form.automark class+="form-control" placeholder=form.automark.label %}
+        </div>
+        <div class="form-group">
+            {{ form.autofeedback.errors }}
+            <label for="{{ form.autofeedback.id_for_label }}">AutoFeedback:</label>
+            {% render_field form.autofeedback class+="form-control" placeholder=form.autofeedback.label %}
+        </div>
+        <div class="form-group">
+            {{ form.mark.errors }}
+            <label for="{{ form.mark.id_for_label }}">Mark:</label>
+            {% render_field form.mark class+="form-control" placeholder=form.mark.label %}
+        </div>
+        <div class="form-group">
+            {{ form.feedback.errors }}
+            <label for="{{ form.feedback.id_for_label }}">Feedback:</label>
+            {% render_field form.feedback class+="form-control" placeholder=form.feedback.label %}
+        </div>
+
+
+        <button type="submit" class="btn btn-success">Submit</button>
+        <a href="{% url 'decentmark:submission_view' assignment.id %}" class="btn btn-info" role="button" aria-pressed="true">Return to Marks</a>
     </form>
 {% endblock %}

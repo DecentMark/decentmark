@@ -1,5 +1,5 @@
-from django.forms import ModelForm, DateField, DateInput
-
+from django import forms
+from django.forms import ModelForm, DateInput, Form
 from decentmark.models import Unit, Assignment, Submission
 
 
@@ -16,6 +16,13 @@ class UnitForm(ModelForm):
             'start': DateInput(attrs={'type': 'date'}),
             'end': DateInput(attrs={'type': 'date'}),
         }
+
+
+class UnitUsersForm(Form):
+    users = forms.FileField()
+    create = forms.BooleanField(required=False)
+    mark = forms.BooleanField(required=False)
+    submit = forms.BooleanField(required=False)
 
 
 class AssignmentForm(ModelForm):
@@ -54,10 +61,16 @@ class FeedbackForm(ModelForm):
         model = Submission
         fields = (
             'solution',
+            'automark',
             'mark',
+            'autofeedback',
             'feedback',
         )
 
     def __init__(self, *args, **kwargs):
         super(FeedbackForm, self).__init__(*args, **kwargs)
         self.fields['solution'].disabled = True
+        self.fields['automark'].disabled = True
+        self.fields['autofeedback'].disabled = True
+
+

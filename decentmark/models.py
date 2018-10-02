@@ -1,9 +1,11 @@
+from datetime import datetime as Datetime
 from django.conf import settings
 from django.core.exceptions import ValidationError
+from django.core.validators import MinValueValidator
 from django.db import models
+from django.urls import reverse
 from django.utils.timezone import now
 from django.utils.translation import ugettext_lazy as _
-
 
 class Profile(models.Model):
     user = models.OneToOneField(
@@ -30,6 +32,13 @@ class Unit(models.Model):
     def __str__(self):
         return self.name
 
+    def get_absolute_url(self):
+        return reverse('decentmark:unit_view', kwargs={'unit_id': self.pk})
+
+class AuditLog(models.Model):
+    date = models.DateTimeField(default=Datetime.now, blank=True)
+    unit = models.ForeignKey(Unit,on_delete=models.SET_NULL, default=None, blank=True, null=True)
+    message = models.TextField()
 
 class UnitUsers(models.Model):
     unit = models.ForeignKey(Unit, on_delete=models.CASCADE)
@@ -82,6 +91,8 @@ class Assignment(models.Model):
     def __str__(self):
         return str(self.unit) + " - " + str(self.name)
 
+    def get_absolute_url(self):
+        return reverse('decentmark:assignment_view', kwargs={'assignment_id': self.pk})
 
 class Submission(models.Model):
     assignment = models.ForeignKey(Assignment, on_delete=models.CASCADE)
@@ -89,16 +100,18 @@ class Submission(models.Model):
                              on_delete=models.CASCADE)
     date = models.DateTimeField(default=now, blank=True)
     solution = models.TextField()
-    marked = models.BooleanField(default=False)
-    mark = models.IntegerField(default=-1)
+    automark = models.IntegerField(default=-1, validators=[MinValueValidator(-1)])
+    autofeedback = models.TextField(default="", blank=True)
+    mark = models.IntegerField(default=-1, validators=[MinValueValidator(-1)])
     feedback = models.TextField(default="", blank=True)
 
     def clean(self):
-        if self.marked:
-            if self.mark < 0:
+        if self.automark >= 0:
+            if self.automark > self.assignment.total:
                 raise ValidationError({
-                    'mark': _('Mark should be greater than or equal to zero')
+                    'mark': _('Mark should be less than or equal to the assignment Total Mark')
                 })
+        if self.mark >= 0:
             if self.mark > self.assignment.total:
                 raise ValidationError({
                     'mark': _('Mark should be less than or equal to the assignment Total Mark')
@@ -106,3 +119,6 @@ class Submission(models.Model):
 
     def __str__(self):
         return str(self.assignment) + " - " + str(self.user)
+
+    def get_absolute_url(self):
+        return reverse('decentmark:submission_view', kwargs={'submission_id': self.pk})
