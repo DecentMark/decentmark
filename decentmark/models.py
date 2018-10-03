@@ -1,4 +1,6 @@
 from datetime import datetime as Datetime
+from enum import Enum
+
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
@@ -94,12 +96,21 @@ class Assignment(models.Model):
     def get_absolute_url(self):
         return reverse('decentmark:assignment_view', kwargs={'assignment_id': self.pk})
 
+class SubmissionStatus(Enum):
+    UNMARKED = 'U'
+    PENDING = 'P'
+    MARKED = 'M'
+    TIMEDOUT = 'T'
+
 class Submission(models.Model):
     assignment = models.ForeignKey(Assignment, on_delete=models.CASCADE)
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
                              on_delete=models.CASCADE)
     date = models.DateTimeField(default=now, blank=True)
     solution = models.TextField()
+    autostatus = models.CharField(default=SubmissionStatus.UNMARKED,
+                                  max_length=1,
+                                  choices=tuple((status.value, status.name) for status in SubmissionStatus))
     automark = models.IntegerField(default=-1, validators=[MinValueValidator(-1)])
     autofeedback = models.TextField(default="", blank=True)
     mark = models.IntegerField(default=-1, validators=[MinValueValidator(-1)])
