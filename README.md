@@ -7,6 +7,13 @@ Automatic grader for programming assignments.
 - cp decentsite/local_settings_example.py decentsite/local_settings.py
 - python manage.py runserver --settings decentsite.local_settings
 
+## Marking
+To install:
+- docker pull trampgeek/jobeinabox
+
+To run:
+- docker run -d -p 4000:80 trampgeek/jobeinabox:latest
+
 ## Testing
 - Download Selenium driver for your OS and add it to the path environment variable.
 - python manage.py test

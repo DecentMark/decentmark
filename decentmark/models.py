@@ -75,7 +75,7 @@ class Assignment(models.Model):
     description = models.TextField()
     attempts = models.IntegerField(default=-1)
     total = models.IntegerField(default=-1)
-    test = models.TextField()
+    test = models.FileField()
     solution = models.TextField()
     template = models.TextField()
     deleted = models.BooleanField(default=False)
