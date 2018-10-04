@@ -73,7 +73,6 @@ class Assignment(models.Model):
     start = models.DateTimeField()
     end = models.DateTimeField()
     description = models.TextField()
-    attempts = models.IntegerField(default=-1)
     total = models.IntegerField(default=-1)
     test = models.TextField()
     solution = models.TextField()
