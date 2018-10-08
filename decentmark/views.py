@@ -261,6 +261,7 @@ def assignment_create(request) -> HttpResponse:
             assignment = form.save(commit=False)
             assignment.unit = request.unit
             assignment = form.save()
+            # TODO: Consider having the creator make a submission using the solution
             return redirect(assignment)
         else:
             for error in form.non_field_errors():
@@ -290,6 +291,7 @@ def assignment_edit(request) -> HttpResponse:
         if form.is_valid():
             assignment = form.save()
             AuditLog.objects.create(unit=request.unit, message="%s[%s] edited %s[%s]" % (request.user, request.user.pk, request.assignment, request.assignment.pk))
+            # TODO: Consider having the creator make a submission using the solution
             return redirect(assignment)
         else:
             for error in form.non_field_errors():
