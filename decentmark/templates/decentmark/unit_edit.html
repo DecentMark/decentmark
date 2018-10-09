@@ -3,7 +3,11 @@
 {% load widget_tweaks %}
 
 {% block title %}Edit Unit {{ unit.name }}{% endblock %}
-
+{% block breadcrumbs %}
+        <li class="breadcrumb-item"><a href="{% url 'decentmark:unit_list' %}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'decentmark:unit_view' unit.id %}">{{ unit.name }}</a></li>
+        <li class="breadcrumb-item active">Edit {{ unit.name }}</li>
+{% endblock %}
 {% block content %}
     <h1>Edit Unit {{ unit.name }}</h1>
  <div class="form-group">
