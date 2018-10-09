@@ -15,6 +15,15 @@ from decentmark.forms import UnitForm, AssignmentForm, SubmissionForm, FeedbackF
     UnitUsersForm
 from decentmark.models import Unit, Assignment, Submission, AuditLog, UnitUsers
 
+def about(request) -> HttpResponse:
+    """
+    About - About Decentmark
+    """
+
+    context = {
+    }
+
+    return render(request, 'decentmark/about.html', context)
 
 @login_required
 @model_object_required(Unit)
