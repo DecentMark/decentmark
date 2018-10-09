@@ -1,7 +1,11 @@
 {% extends "base.html" %}
 
 {% block title %}{{ unit.name }} Audit Log{% endblock %}
-
+{% block breadcrumbs %}
+        <li class="breadcrumb-item"><a href="{% url 'decentmark:unit_list' %}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'decentmark:unit_view' unit.id %}">{{ unit.name }}</a></li>
+        <li class="breadcrumb-item active">Audit Log For  {{ unit.name }}</li>
+{% endblock %}
 {% block content %}
     <div class="container">
 

@@ -2,6 +2,11 @@
 {% load static %}
 {% block head %} {% endblock %}
 {% block title %}{{ unit.name }} Assignments{% endblock %}
+{% block breadcrumbs %}
+        <li class="breadcrumb-item"><a href="{% url 'decentmark:unit_list' %}">Home</a></li>
+        <li class="breadcrumb-item "><a href="{% url 'decentmark:unit_view' unit.id %}">{{ unit.name }}</a></li>
+        <li class="breadcrumb-item active">List of Assignments in {{ unit.name }}</li>
+{% endblock %}
 {% block content %}
     <div class="container">
         <h1>{{ unit.name }} Assignments</h1>
@@ -28,9 +33,6 @@
                 {% if request.unit_user.create %}
                     <a href="{% url 'decentmark:assignment_create' unit.id %}" class="btn btn-primary">Create new assignment</a>
                 {% endif %}
-            </div>
-            <div class="position">
-                <a href="{% url 'decentmark:unit_view' unit.id %}" class="btn btn-success">Unit Home</a>
             </div>
     </div>
 {% endblock %}

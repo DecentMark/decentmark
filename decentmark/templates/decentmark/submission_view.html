@@ -1,7 +1,14 @@
 {% extends "base.html" %}
 
 {% block title %}{{ unit.name }} - {{ assignment.name }} - {{ submission.user.username }}{% endblock %}
-
+{% block breadcrumbs %}
+        <li class="breadcrumb-item"><a href="{% url 'decentmark:unit_list' %}">Home</a></li>
+        <li class="breadcrumb-item "><a href="{% url 'decentmark:unit_view' unit.id %}">{{ unit.name }}</a></li>
+        <li class="breadcrumb-item "><a href="{% url 'decentmark:assignment_list' unit.id %}">List of Assignments in {{ unit.name }}</a></li>
+        <li class="breadcrumb-item "><a href="{% url 'decentmark:assignment_view' assignment.id %}">{{ unit.name }} - {{ assignment.name }}</a></li>
+        <li class="breadcrumb-item "><a href="{% url 'decentmark:submission_list' assignment.id %}">Submissions List</a></li>
+        <li class="breadcrumb-item active">{{ submission.user.username }} Submission</li>
+{% endblock %}
 {% block content %}
     <div class="container">
         <h1>{{ assignment.name }} by {{ submission.user.username }}</h1>
@@ -17,6 +24,10 @@
                 <tr>
                     <th>Submitted solution</th>
                     <td>{{ submission.solution }}</td>
+                </tr>
+                <tr>
+                    <th>Maximum Mark</th>
+                    <td>{{ assignment.total }}</td>
                 </tr>
                 <tr>
                     <th>AutoMark</th>
@@ -45,7 +56,7 @@
                             {% endif %}
                         {% else %}
                     </div>
-                        <p>Submission has not been marked</p>
+                        <h4 class="text-danger">Submission has not been marked</h4>
                 {% endif %}
                     {% if request.unit_user.mark %}
                         <p><a href="{% url 'decentmark:submission_mark' submission.id %}" class="btn btn-warning" role="button" aria-pressed="true">Mark this submission</a></p>

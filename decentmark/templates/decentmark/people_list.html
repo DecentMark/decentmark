@@ -1,16 +1,26 @@
 {% extends "base.html" %}
 
  {% block title %}{{ unit.name }} People {% endblock %}
-
+{% block breadcrumbs %}
+        <li class="breadcrumb-item"><a href="{% url 'decentmark:unit_list' %}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'decentmark:unit_view' unit.id %}">{{ unit.name }}</a></li>
+        <li class="breadcrumb-item active">List of People in {{ unit.name }}</li>
+{% endblock %}
  {% block content %}
-     <h1>{{ unit.name }} People </h1>
-
-     <ul>
-     {% for people in people_list %}
-         <li>
-              {{ people.user }} {{ people.user.create }} {{ people.user.mark }} {{ people.user.submit }}
-         </li>
-     {% endfor %}
-     </ul>
-
- {% endblock %}
+<div class="tableContainer">
+    <table class="table table-bordered">
+        <thead>
+            <tr class="info">
+                <th>List of People in {{ unit.name }}</th>
+            </tr>
+        </thead>
+            <tbody>
+                 {% for people in people_list %}
+                     <tr>
+                         <td>{{ people.user }} {{ people.user.create }} {{ people.user.mark }} {{ people.user.submit }}</td>
+                     </tr>
+                 {% endfor %}
+             </tbody>
+    </table>
+</div>
+{% endblock %}
