@@ -4,7 +4,8 @@ from urllib.error import HTTPError
 from mako.template import Template
 
 
-JOBE_SERVER = 'localhost:4000'
+JOBE_SERVER = 'jobe2.cosc.canterbury.ac.nz'
+# JOBE_SERVER = 'localhost:4000'
 
 
 def http_request(method, resource, data, headers):
