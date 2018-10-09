@@ -48,7 +48,7 @@ def automatic_mark_and_feedback(submission):
         'TEACHER_SOLUTION': submission.assignment.solution
     }
     local_var = {}
-    exec(submission.assignment.test.read(), global_var, local_var)
+    exec(submission.assignment.test, global_var, local_var)
 
     submission.autostatus = 'M'
     submission.automark = local_var['AUTOMARK']

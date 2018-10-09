@@ -74,7 +74,7 @@ class Assignment(models.Model):
     end = models.DateTimeField()
     description = models.TextField()
     total = models.IntegerField(default=-1)
-    test = models.FileField()
+    test = models.TextField()
     solution = models.TextField()
     template = models.TextField()
     deleted = models.BooleanField(default=False)
