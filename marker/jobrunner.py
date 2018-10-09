@@ -6,9 +6,14 @@ from mako.template import Template
 
 JOBE_SERVER = 'jobe2.cosc.canterbury.ac.nz'
 # JOBE_SERVER = 'localhost:4000'
+API_KEY = '2AAA7A5415B4A9B394B54BF1D2E9D'  # A working (100/hr) key on Jobe2
+
+USE_API_KEY = True
 
 
 def http_request(method, resource, data, headers):
+    if USE_API_KEY:
+            headers["X-API-KEY"] = API_KEY
     connect = http.client.HTTPConnection(JOBE_SERVER)
     connect.request(method, resource, data, headers)
     return connect
