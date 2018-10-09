@@ -6,7 +6,6 @@
         <li class="breadcrumb-item "><a href="{% url 'decentmark:assignment_list' unit.id %}">List of Assignments in {{ unit.name }}</a></li>
         <li class="breadcrumb-item "><a href="{% url 'decentmark:assignment_view' assignment.id %}">{{ unit.name }} - {{ assignment.name }}</a></li>
         <li class="breadcrumb-item active">Submission</li>
-
 {% endblock %}
 {% block title %}{{ unit.name }} - {{ assignment.name }} Submission{% endblock %}
 
