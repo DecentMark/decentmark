@@ -3,11 +3,7 @@
 {% load widget_tweaks %}
 
 {% block title %}{{ unit.name }} Invite People {% endblock %}
-{% block breadcrumbs %}
-        <li class="breadcrumb-item"><a href="{% url 'decentmark:unit_list' %}">Home</a></li>
-        <li class="breadcrumb-item"><a href="{% url 'decentmark:unit_view' unit.id %}">{{ unit.name }}</a></li>
-        <li class="breadcrumb-item active">Invite a User to {{ unit.name }}</li>
-{% endblock %}
+
 {% block content %}
 <div class="container">
     <h1>Invite People</h1>
@@ -17,9 +13,7 @@
         <div class="form-group">
             {{ form.users.errors }}
             <label for="{{ form.users.id_for_label }}">Users:</label>
-            <div class="btn btn-primary btn-file">
-                {% render_field form.users class+="FileField()" %}
-            </div>
+            {% render_field form.users class+="FileField()" %}
         </div>
         <div class="form-group">
             {{ form.create.errors }}

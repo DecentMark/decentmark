@@ -29,7 +29,8 @@
          {% if user.is_authenticated %}
             <div class="container">
                   <ol class="breadcrumb">
-                      {% block breadcrumbs %}
+                      <li><a href="{% url 'decentmark:unit_list' %}">Home</a></li>
+                      {% block unit_view_link %}
                       {% endblock %}
                   </ol>
                   <div class="logout">
