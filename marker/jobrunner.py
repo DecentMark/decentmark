@@ -8,6 +8,7 @@ from mako.template import Template
 JOBE_SERVER = 'jobe2.cosc.canterbury.ac.nz'
 API_KEY = '2AAA7A5415B4A9B394B54BF1D2E9D'  # A working (100/hr) key on Jobe2
 USE_API_KEY = True
+SUCCESSFUL_RUN = 15
 
 
 def http_request(method, resource, data, headers):
@@ -59,7 +60,6 @@ def get_result(job_template, solution, test_case):
         Template(job_template).render(SOLUTION=solution, TEST_CASE=test_case),
         'test.py'
     )
-    try:
-        return json.loads(result_obj['stdout'])
-    except Exception:
+    if result_obj['outcome'] != SUCCESSFUL_RUN:
         return None
+    return json.loads(result_obj['stdout'])
