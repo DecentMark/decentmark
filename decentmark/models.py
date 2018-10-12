@@ -49,6 +49,7 @@ class UnitUsers(models.Model):
     create = models.BooleanField(default=False)
     mark = models.BooleanField(default=False)
     submit = models.BooleanField(default=True)
+    tag = models.CharField(max_length=200, default=None, blank=True, null=True)
     # TEACHER = 'teacher'
     # MARKER = 'marker'
     # STUDENT = 'student'
