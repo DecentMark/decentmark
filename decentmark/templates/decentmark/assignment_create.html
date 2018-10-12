@@ -29,11 +29,6 @@
             {% render_field form.description class+="form-control" placeholder=form.name.label %}
         </div>
         <div class="form-group">
-            {{ form.attempts.errors }}
-            <label for="{{ form.attempts.id_for_label }}">Attempts:</label>
-            {% render_field form.attempts class+="form-control" placeholder=form.name.label %}
-        </div>
-        <div class="form-group">
             {{ form.total.errors }}
             <label for="{{ form.total.id_for_label }}">Total:</label>
             {% render_field form.total class+="form-control" placeholder=form.name.label %}
