@@ -49,6 +49,7 @@ class UnitUsers(models.Model):
     create = models.BooleanField(default=False)
     mark = models.BooleanField(default=False)
     submit = models.BooleanField(default=True)
+    tag = models.CharField(max_length=200, default=None, blank=True, null=True)
     # TEACHER = 'teacher'
     # MARKER = 'marker'
     # STUDENT = 'student'
@@ -73,7 +74,6 @@ class Assignment(models.Model):
     start = models.DateTimeField()
     end = models.DateTimeField()
     description = models.TextField()
-    attempts = models.IntegerField(default=-1)
     total = models.IntegerField(default=-1)
     test = models.TextField()
     solution = models.TextField()
@@ -108,7 +108,7 @@ class Submission(models.Model):
                              on_delete=models.CASCADE)
     date = models.DateTimeField(default=now, blank=True)
     solution = models.TextField()
-    autostatus = models.CharField(default=SubmissionStatus.UNMARKED,
+    autostatus = models.CharField(default=SubmissionStatus.UNMARKED.value,
                                   max_length=1,
                                   choices=tuple((status.value, status.name) for status in SubmissionStatus))
     automark = models.IntegerField(default=-1, validators=[MinValueValidator(-1)])
@@ -129,7 +129,7 @@ class Submission(models.Model):
                 })
 
     def __str__(self):
-        return str(self.assignment) + " - " + str(self.user)
+        return str(self.assignment) + " - " + str(self.user) + " - " + str(self.autostatus)
 
     def get_absolute_url(self):
         return reverse('decentmark:submission_view', kwargs={'submission_id': self.pk})

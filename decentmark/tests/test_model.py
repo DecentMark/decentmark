@@ -67,7 +67,7 @@ class AssignmentTest(TestCase):
                                    description='111', deleted='False')
         Assignment.objects.create(unit=unit, name='Python Lab 1', start='2018-10-28 14:30:59',
                                   end='2018-10-25 14:30:59',
-                                  description='111', attempts=1, total=0, test='we', solution='Answer',
+                                  description='111', total=0, test='we', solution='Answer',
                                   template='Template', deleted='False')
 
     def test_date(self):
@@ -95,7 +95,7 @@ class SubmissionTest(TestCase):
         unit = Unit.objects.create(name='Python', start='2018-10-25 14:30:59', end='2017-10-25 14:30:59',
                                    description='111', deleted='False')
         assignment = Assignment.objects.create(unit=unit, name='Python Lab 1', start='2018-10-28 14:30:59',
-                                               end='2018-10-25 14:30:59', description='111', attempts=1, total=0,
+                                               end='2018-10-25 14:30:59', description='111', total=0,
                                                test='we', solution='Answer', template='Template', deleted='False')
         Submission.objects.create(assignment=assignment, user=user, date='2018-10-28 14:30:59', solution='Answer',
                                   automark=10, autofeedback='All tests passed',
