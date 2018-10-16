@@ -15,6 +15,7 @@
                 <tr class="info">
                     <th>Student Submission</th>
                     <th>Submitted on</th>
+                    <th>Submission Status</th>
                 </tr>
             </thead>
             <tbody>
@@ -22,6 +23,7 @@
                     <tr>
                         <td><a href="{% url 'decentmark:submission_view' submission.id %}">{{ submission.user.username }}</a></td>
                         <td>{{ submission.date }}</td>
+                        <td>{{ submission.autostatus }}</td>
                     </tr>
                 {% endfor %}
             </tbody>

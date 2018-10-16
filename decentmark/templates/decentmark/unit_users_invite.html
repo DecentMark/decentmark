@@ -17,9 +17,7 @@
         <div class="form-group">
             {{ form.users.errors }}
             <label for="{{ form.users.id_for_label }}">Users:</label>
-            <div class="btn btn-primary btn-file">
                 {% render_field form.users class+="FileField()" %}
-            </div>
         </div>
         <div class="form-group">
             {{ form.create.errors }}
