@@ -33,7 +33,6 @@ class AssignmentForm(ModelForm):
             'start',
             'end',
             'description',
-            'attempts',
             'total',
             'test',
             'solution',
