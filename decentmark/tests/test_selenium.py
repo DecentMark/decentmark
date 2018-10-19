@@ -605,11 +605,3 @@ class MarkersTests(InitSelenium):
 
     def test_marker_more_permission_check(self):
         pass
-
-
-
-
-
-
-
-

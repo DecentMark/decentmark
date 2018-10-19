@@ -6,9 +6,12 @@ header{
     border-bottom:#948c8a  3px solid;
     }
 header a{
-    color:#efe3e3;
+    color:#ffffff;
     text-transform: uppercase;
     font-size:16px;
+}
+header a:hover{
+    color:white;
 }
 header #branding{
     float:left;
@@ -41,7 +44,7 @@ h1{
 .logout{
     position: absolute;
     left:1100px;
-    top:75px;
+    top:5px;
     color:red;
 }
 #time-display{
@@ -49,4 +52,7 @@ h1{
     margin-top:-45px;
     padding : 0 10px 0 10px;
     font-size : 150%;
+}
+.breadcrumb {
+background-color: #cacac1;
 }

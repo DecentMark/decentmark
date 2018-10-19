@@ -3,7 +3,13 @@
 {% load widget_tweaks %}
 
 {% block title %}{{ unit.name }} Edit Assignment {{ assignment.name }}{% endblock %}
-
+{% block breadcrumbs %}
+        <li class="breadcrumb-item"><a href="{% url 'decentmark:unit_list' %}">Home</a></li>
+        <li class="breadcrumb-item "><a href="{% url 'decentmark:unit_view' unit.id %}">{{ unit.name }}</a></li>
+        <li class="breadcrumb-item "><a href="{% url 'decentmark:assignment_list' unit.id %}">List of Assignments in {{ unit.name }}</a></li>
+        <li class="breadcrumb-item "><a href="{% url 'decentmark:assignment_view' assignment.id %}">{{ assignment.name }}</a></li>
+        <li class="breadcrumb-item active">Edit {{ assignment.name }}</li>
+{% endblock %}
 {% block content %}
     <h1>Edit Assignment {{ assignment.name }}</h1>
 

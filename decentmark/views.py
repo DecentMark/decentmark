@@ -16,6 +16,15 @@ from decentmark.forms import UnitForm, AssignmentForm, SubmissionForm, FeedbackF
     UnitUsersForm
 from decentmark.models import Unit, Assignment, Submission, AuditLog, UnitUsers
 
+def about(request) -> HttpResponse:
+    """
+    About - About Decentmark
+    """
+
+    context = {
+    }
+
+    return render(request, 'decentmark/about.html', context)
 
 @login_required
 @model_object_required(Unit)
@@ -64,9 +73,9 @@ def unit_create(request) -> HttpResponse:
     """
     Unit Create - Create a new Unit
     """
-    # TODO: Use a permission for this
-    if not request.user.is_staff:
-        raise PermissionDenied("You need staff permission to create new units")
+    # # TODO: Use a permission for this
+    # if not request.user.is_staff:
+    #     raise PermissionDenied("You need staff permission to create new units")
 
     if request.method == 'POST':
         form = UnitForm(request.POST)
