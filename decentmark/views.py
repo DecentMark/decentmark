@@ -11,6 +11,7 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse
 
+from marker import tasks
 from decentmark.decorators import model_object_required, unit_permissions_required, modify_request
 from decentmark.forms import UnitForm, AssignmentForm, SubmissionForm, FeedbackForm, \
     UnitUsersForm
@@ -399,6 +400,7 @@ def submission_create(request) -> HttpResponse:
             submission.user = request.user
             submission.assignment = request.assignment
             submission = form.save()
+            tasks.automatic_mark_and_feedback(submission)
             AuditLog.objects.create(unit=request.unit, message="%s[%s] submitted %s[%s]" % (request.user, request.user.pk, submission, submission.pk))
             return redirect(submission)
         else:
