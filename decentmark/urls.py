@@ -5,6 +5,7 @@ app_name = 'decentmark'
 
 urlpatterns = [
     path('', views.unit_list, name='unit_list'),
+    path('about/', views.about, name='about'),
     path('u/create/', views.unit_create, name='unit_create'),
     # Unit required
     path('u/<int:unit_id>/', views.unit_view, name='unit_view'),
