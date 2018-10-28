@@ -404,7 +404,9 @@ def submission_create(request) -> HttpResponse:
             for error in form.non_field_errors():
                 messages.error(request, error)
     else:
-        form = SubmissionForm()
+        form = SubmissionForm(initial={
+            'solution': request.assignment.template
+        })
 
     context = {
         'form': form,
