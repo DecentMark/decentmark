@@ -198,10 +198,10 @@ def get_user(email, first_name, last_name):
             first_name=first_name,
             last_name=last_name
         )
-        user.email_user(
+        tasks.email_user(
+            username,
             'account creation',
-            'username: %s\npassword: %s' % (user.get_username(), password),
-            fail_silently=False
+            'username: %s\npassword: %s' % (user.get_username(), password)
         )
     return user
 
@@ -216,10 +216,10 @@ def create_unit_user(user, unit, create, mark, submit, tag):
         tag=tag
     )
     unit_users.save()
-    user.email_user(
+    tasks.email_user(
+        user.username,
         'unit invitation',
-        'welcome to %s' % unit,
-        fail_silently=False
+        'welcome to %s' % unit
     )
 
 

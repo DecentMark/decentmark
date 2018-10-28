@@ -1,3 +1,5 @@
+from django.contrib.auth.models import User
+
 from decentmark.models import Submission
 from marker.celery import app
 
@@ -30,3 +32,21 @@ def automatic_mark_and_feedback(self, submission_id):
     submission.automark = global_var['AUTOMARK']
     submission.autofeedback = global_var['AUTOFEEDBACK']
     submission.save()
+
+
+@app.task(
+    bind=True,
+    name='tasks.email_user',
+    ignore_result=True,
+    autoretry_for=(Exception,),
+    retry_backoff=True,
+    retry_jitter=True,
+    acks_late=True,
+)
+def email_user(self, username, subject, message):
+    user = User.objects.get(username=username)
+    user.email_user(
+        subject,
+        message,
+        fail_silently=False
+    )
