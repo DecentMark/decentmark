@@ -8,10 +8,7 @@ JOB_TEMPLATE = '''
 import json
 ${IMPORTS}
 
-${HELPER_CODE}
-
-${HEADER}
-    %s
+%s
 
 
 if __name__ == '__main__':
@@ -36,8 +33,6 @@ def automatic_mark_and_feedback(submission):
 
     job = Template(JOB_TEMPLATE).render(
         IMPORTS='',
-        HELPER_CODE='',
-        HEADER=submission.assignment.template,
         SOLUTION=SOLUTION_VARIABLE,
         TEST_CASE=TEST_CASE_VARIABLE
     )
@@ -48,7 +43,10 @@ def automatic_mark_and_feedback(submission):
         'TEACHER_SOLUTION': submission.assignment.solution
     }
     local_var = {}
-    exec(submission.assignment.test, global_var, local_var)
+    try:
+        exec(submission.assignment.test, global_var, local_var)
+    except SystemExit:
+        pass
 
     submission.autostatus = 'M'
     submission.automark = local_var['AUTOMARK']
