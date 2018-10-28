@@ -1,6 +1,8 @@
 import random
 import string
+from datetime import datetime
 
+import pytz
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
@@ -409,8 +411,8 @@ def submission_create(request) -> HttpResponse:
             submission.user = request.user
             submission.assignment = request.assignment
             submission = form.save()
-            tasks.automatic_mark_and_feedback(submission)
-            AuditLog.objects.create(unit=request.unit, message="%s[%s] submitted %s[%s]" % (request.user, request.user.pk, submission, submission.pk))
+            tasks.automatic_mark_and_feedback.delay(submission.pk)
+            AuditLog.objects.create(date=datetime.now(pytz.UTC), unit=request.unit, message="%s[%s] submitted %s[%s]" % (request.user, request.user.pk, submission, submission.pk))
             return redirect(submission)
         else:
             for error in form.non_field_errors():
