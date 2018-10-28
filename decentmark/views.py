@@ -9,6 +9,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
+from django.urls import reverse
 
 from marker import tasks
 from decentmark.decorators import model_object_required, unit_permissions_required, modify_request
@@ -16,6 +17,15 @@ from decentmark.forms import UnitForm, AssignmentForm, SubmissionForm, FeedbackF
     UnitUsersForm
 from decentmark.models import Unit, Assignment, Submission, AuditLog, UnitUsers
 
+def about(request) -> HttpResponse:
+    """
+    About - About Decentmark
+    """
+
+    context = {
+    }
+
+    return render(request, 'decentmark/about.html', context)
 
 @login_required
 @model_object_required(Unit)
@@ -156,7 +166,7 @@ def get_users_info(file):
     users = []
     for line in file:
         try:
-            email, first_name, last_name = line.decode('utf-8').strip().split(',')
+            email, tag, first_name, last_name = line.decode('utf-8').strip().split(',')
         except ValueError:
             continue
         try:
@@ -165,6 +175,7 @@ def get_users_info(file):
             continue
         users.append({
             'email': email,
+            'tag': tag,
             'first name': first_name,
             'last name': last_name
         })
@@ -193,13 +204,14 @@ def get_user(email, first_name, last_name):
     return user
 
 
-def create_unit_user(user, unit, create, mark, submit):
+def create_unit_user(user, unit, create, mark, submit, tag):
     unit_users = UnitUsers(
         user=user,
         unit=unit,
         create=create,
         mark=mark,
-        submit=submit
+        submit=submit,
+        tag=tag
     )
     unit_users.save()
     user.email_user(
@@ -229,10 +241,10 @@ def unit_users_invite(request) -> HttpResponse:
                         request.unit,
                         form.cleaned_data['create'],
                         form.cleaned_data['mark'],
-                        form.cleaned_data['submit']
+                        form.cleaned_data['submit'],
+                        u['tag']
                     )
-            # TODO change to people list
-            return redirect(request.unit)
+            return redirect(reverse('decentmark:people_list', args=(request.unit.id,)))
         else:
             for error in form.non_field_errors():
                 messages.error(request, error)
