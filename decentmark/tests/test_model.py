@@ -1,8 +1,6 @@
 from django.test import TestCase
 from decentmark.models import *
 from django.contrib.auth import get_user_model
-# import datetime
-# from django.core.exceptions import ValidationError
 
 
 class ProfileTest(TestCase):
@@ -88,7 +86,7 @@ class AssignmentTest(TestCase):
                                    description='111', deleted='False')
         total_mark = Assignment(unit=unit, name='Python Lab 1', start='2018-10-28 14:30:59',
                                 end='2019-10-25 14:30:59',
-                                description='111', attempts=1, total=-4, test='we', solution='Answer',
+                                description='111', total=-4, test='we', solution='Answer',
                                 template='Template', deleted='False')
         with self.assertRaises(ValidationError):
             total_mark.full_clean()
@@ -115,7 +113,7 @@ class SubmissionTest(TestCase):
                                                end='2018-10-25 14:30:59', description='111', total=0,
                                                test='we', solution='Answer', template='Template', deleted='False')
         Submission.objects.create(assignment=assignment, user=user, date='2018-10-28 14:30:59', solution='Answer',
-                                  automark=10, autofeedback='All tests passed',
+                                  autostatus='M', automark=0, autofeedback='All tests passed',
                                   mark=10, feedback='Good')
 
     def test_auto_mark(self):
@@ -123,23 +121,10 @@ class SubmissionTest(TestCase):
         with self.assertRaises(ValidationError):
             auto_mark.full_clean()
 
-    # def test_mark(self):
-    #     user = get_user_model().objects.create_superuser(username='admin', email='admin@decent.mark',
-    #                                                      password='password')
-    #     unit = Unit.objects.create(name='Python', start='2018-10-25 14:30:59', end='2017-10-25 14:30:59',
-    #                                description='111', deleted='False')
-    #     assignment = Assignment.objects.create(unit=unit, name='Python Lab 1', start='2018-10-28 14:30:59',
-    #                                            end='2019-10-25 14:30:59', description='111', attempts=1, total=10,
-    #                                            test='we', solution='Answer', template='Template', deleted='False')
-    #     mark = Submission(assignment=assignment, user=user, date='2018-10-28 14:30:59', solution='Answer',
-    #                               automark=20, autofeedback='All tests passed',
-    #                               mark=20, feedback='Good')
-    #     with self.assertRaises(ValidationError):
-    #         mark.full_clean()
-
     def test_str(self):
         submission = Submission.objects.get(id=1)
-        expected_object_name = str(submission.assignment) + ' - ' + str(submission.user)
+        expected_object_name = str(submission.assignment) + ' - ' + str(submission.user) + \
+                               ' - ' + str(submission.autostatus)
         self.assertEquals(expected_object_name, str(submission))
 
     def test_url(self):
