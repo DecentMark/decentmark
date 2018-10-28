@@ -1,4 +1,4 @@
-JOB_TEMPLATES = {'python3': '''
+CODE_TEMPLATES = {'python3': '''
 import json
 ${HELPER_CODE}
 
