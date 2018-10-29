@@ -8,8 +8,9 @@ Automatic grader for programming assignments.
 - python manage.py runserver --settings decentsite.local_settings
 
 ## Marking
-- install RabbitMQ
-- celery -A marker worker -l info
+- install and setup RabbitMQ
+- sudo rabbitmq-server
+- celery -A decentmark worker -l info
 
 ## Testing
 - Download Selenium driver for your OS and add it to the path environment variable.
