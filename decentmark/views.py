@@ -13,7 +13,7 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse
 
-from marker import tasks
+from decentmark import tasks
 from decentmark.decorators import model_object_required, unit_permissions_required, modify_request
 from decentmark.forms import UnitForm, AssignmentForm, SubmissionForm, FeedbackForm, \
     UnitUsersForm

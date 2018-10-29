@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 
 from decentmark.models import Submission
-from marker.celery import app
+from decentmark.celery import app
 
 
 @app.task(
