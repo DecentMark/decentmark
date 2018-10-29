@@ -30,7 +30,7 @@ class InitSelenium(LiveServerTestCase):
         self.browser.find_element_by_css_selector(".btn-primary").click()
 
     def perform_logout(self):
-        self.browser.find_element_by_css_selector(".glyphicon-log-out").click()
+        self.browser.find_element_by_css_selector(".text-danger").click()
 
     def perform_manual_mark(self,mark,feedback):
         manual_mark = self.browser.find_element_by_name("mark")
@@ -52,7 +52,7 @@ class StudentsTests(InitSelenium):
         self.unit1=Unit.objects.create(name='Python', start='2017-10-25 14:30:59', end='2018-10-25 14:30:59', description='111',
                             deleted='False')
         UnitUsers.objects.create(unit=self.unit1, user=self.student1,create=False,mark=False,submit=True)
-        self.assigngment1=Assignment.objects.create(unit=self.unit1,name='assigngment1',start='2018-10-24 14:30:59',end='2018-10-26 14:30:59',description='assignment1_discription',attempts=1,total=5, test='1',solution='1',template='1',deleted=False)
+        self.assigngment1=Assignment.objects.create(unit=self.unit1,name='assigngment1',start='2018-10-24 14:30:59',end='2018-10-26 14:30:59',description='assignment1_discription',total=5, test='1',solution='1',template='1',deleted=False)
         self.unit2=Unit.objects.create(name='Django', start='2018-10-25 14:30:59', end='2017-10-25 14:30:59', description='222',
                             deleted='False')
 
@@ -79,19 +79,19 @@ class StudentsTests(InitSelenium):
 
     def test_student_login_out_redirects_to_logout_page(self):     # student login out test
         self.perform_login('stu','stu')
-        self.browser.find_element_by_xpath("/html/body/main/div[1]/div/a").click()
+        self.perform_logout()
         self.assertEqual(self.live_server_url + '/accounts/logout/', self.browser.current_url)
 
     def test_student_login_out_redirects_to_login_page(self):     # student login out to login test
         self.perform_login('stu','stu')
-        self.browser.find_element_by_xpath("/html/body/main/div[1]/div/a").click()
+        self.perform_logout()
         self.browser.find_element_by_css_selector(".btn-primary").click()
         self.assertEqual(self.live_server_url + '/accounts/login/', self.browser.current_url)
 
     def test_student_navigation_home(self):     # student navigation to home test
         self.perform_login('stu','stu')
         self.browser.find_element_by_xpath("/html/body/main/div[2]/div/div[1]/table/tbody/tr[1]/td[1]/a").click()
-        self.browser.find_element_by_xpath("/html/body/main/div[1]/ol/li/a").click()
+        self.browser.find_element_by_xpath("/html/body/main/div[1]/div/ol/li[1]/a").click()
         self.assertEqual(self.live_server_url + '/', self.browser.current_url)
 
     def test_student_redirects_to_create_assignment(self):  #permission check with manual navigation
@@ -198,7 +198,8 @@ class StudentsTests(InitSelenium):
     def test_student_viwe_a_submission(self):                   #student view a submission
         self.perform_submission("sample_solution1")
         self.browser.find_element_by_css_selector(".btn-info").click()
-        submission_area=self.browser.find_element_by_xpath("/html/body/main/div[2]/table/tbody/tr[1]/td[1]").text
+        submission_area=self.browser.find_element_by_xpath("/html/body/main/div[2]/table/tbody/tr[1]/td[1]/a").text
+
         self.assertEqual(submission_area,self.student1.username)
 
 
@@ -227,7 +228,7 @@ class TeachersTests(InitSelenium):
         UnitUsers.objects.create(unit=self.unit1, user=self.student1,create=False,mark=False,submit=True)
 
 
-        self.assignment1=Assignment.objects.create(unit=self.unit1,name='assigngment1',start='2018-10-24 14:30:59',end='2018-10-26 14:30:59',description='assignment1_discription',attempts=1,total=5, test='1',solution='1',template='1',deleted=False)
+        self.assignment1=Assignment.objects.create(unit=self.unit1,name='assigngment1',start='2018-10-24 14:30:59',end='2018-10-26 14:30:59',description='assignment1_discription',total=5, test='1',solution='1',template='1',deleted=False)
         self.submission1=Submission.objects.create(assignment=self.assignment1,user=self.student1,solution="sample_solution")
 
 
@@ -246,12 +247,12 @@ class TeachersTests(InitSelenium):
 
     def test_teacher_login_out_redirects_to_logout_page(self):     # teacher login out test
         self.perform_login('teacher','teacher')
-        self.browser.find_element_by_xpath("/html/body/main/div[1]/div/a").click()
+        self.perform_logout()
         self.assertEqual(self.live_server_url + '/accounts/logout/', self.browser.current_url)
 
     def test_teacher_login_out_redirects_to_login_page(self):     # teacher login out to login test
         self.perform_login('teacher','teacher')
-        self.browser.find_element_by_xpath("/html/body/main/div[1]/div/a").click()
+        self.perform_logout()
         self.browser.find_element_by_css_selector(".btn-primary").click()
         self.assertEqual(self.live_server_url + '/accounts/login/', self.browser.current_url)
 
@@ -318,7 +319,7 @@ class TeachersTests(InitSelenium):
         mark=4
         feedback="HD"
         self.perform_manual_mark(mark,feedback)
-        feedback_area=self.browser.find_element_by_xpath("/html/body/main/div[2]/div/table/tbody/tr[7]/td").text
+        feedback_area=self.browser.find_element_by_xpath("/html/body/main/div[2]/div/table/tbody/tr[8]/td").text
         self.assertEqual(feedback_area,feedback)
 
     def test_teacher_manual_score(self):
@@ -333,7 +334,7 @@ class TeachersTests(InitSelenium):
         mark=4
         feedback="HD"
         self.perform_manual_mark(mark,feedback)
-        score_area=self.browser.find_element_by_xpath("/html/body/main/div[2]/div/table/tbody/tr[6]/td").text
+        score_area=self.browser.find_element_by_xpath("/html/body/main/div[2]/div/table/tbody/tr[7]/td").text
         self.assertEqual(score_area,"%d / %d" % (mark,self.assignment1.total))
 
     def perform_edit_unit(self,name,start,end,discription):
@@ -486,7 +487,7 @@ class MarkersTests(InitSelenium):
         UnitUsers.objects.create(unit=self.unit1, user=self.marker1,create=False,mark=True,submit=False)
         UnitUsers.objects.create(unit=self.unit1, user=self.student1,create=False,mark=False,submit=True)
 
-        self.assignment1=Assignment.objects.create(id=2,unit=self.unit1,name='assigngment1',start='2018-10-24 14:30:59',end='2018-10-26 14:30:59',description='assignment1_discription',attempts=1,total=5, test='1',solution='1',template='1',deleted=False)
+        self.assignment1=Assignment.objects.create(id=2,unit=self.unit1,name='assigngment1',start='2018-10-24 14:30:59',end='2018-10-26 14:30:59',description='assignment1_discription',total=5, test='1',solution='1',template='1',deleted=False)
         self.submission1=Submission.objects.create(assignment=self.assignment1,user=self.student1,solution="sample_solution")
 
 
@@ -504,12 +505,12 @@ class MarkersTests(InitSelenium):
 
     def test_marker_login_out_redirects_to_logout_page(self):     # marker login out test
         self.perform_login('marker','marker')
-        self.browser.find_element_by_xpath("/html/body/main/div[1]/div/a").click()
+        self.perform_logout()
         self.assertEqual(self.live_server_url + '/accounts/logout/', self.browser.current_url)
 
     def test_marker_login_out_redirects_to_login_page(self):     # marker login out to login test
         self.perform_login('marker','marker')
-        self.browser.find_element_by_xpath("/html/body/main/div[1]/div/a").click()
+        self.perform_logout()
         self.browser.find_element_by_css_selector(".btn-primary").click()
         self.assertEqual(self.live_server_url + '/accounts/login/', self.browser.current_url)
 
@@ -575,7 +576,7 @@ class MarkersTests(InitSelenium):
         mark=3
         feedback="D"
         self.perform_manual_mark(mark,feedback)
-        feedback_area=self.browser.find_element_by_xpath("/html/body/main/div[2]/div/table/tbody/tr[7]/td").text
+        feedback_area=self.browser.find_element_by_xpath("/html/body/main/div[2]/div/table/tbody/tr[8]/td").text
         self.assertEqual(feedback_area,feedback)
 
     def test_marker_manual_score(self):
@@ -590,7 +591,7 @@ class MarkersTests(InitSelenium):
         mark=3
         feedback="D"
         self.perform_manual_mark(mark,feedback)
-        score_area=self.browser.find_element_by_xpath("/html/body/main/div[2]/div/table/tbody/tr[6]/td").text
+        score_area=self.browser.find_element_by_xpath("/html/body/main/div[2]/div/table/tbody/tr[7]/td").text
         self.assertEqual(score_area,"%d / %d" % (mark,self.assignment1.total))
     def test_marker_auto_score_and_feedback(self):
         pass
