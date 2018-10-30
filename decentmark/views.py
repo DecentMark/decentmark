@@ -1,6 +1,8 @@
 import random
 import string
+from datetime import datetime
 
+import pytz
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
@@ -11,7 +13,7 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse
 
-from marker import tasks
+from decentmark import tasks
 from decentmark.decorators import model_object_required, unit_permissions_required, modify_request
 from decentmark.forms import UnitForm, AssignmentForm, SubmissionForm, FeedbackForm, \
     UnitUsersForm
@@ -196,10 +198,10 @@ def get_user(email, first_name, last_name):
             first_name=first_name,
             last_name=last_name
         )
-        user.email_user(
+        tasks.email_user(
+            username,
             'account creation',
-            'username: %s\npassword: %s' % (user.get_username(), password),
-            fail_silently=False
+            'username: %s\npassword: %s' % (user.get_username(), password)
         )
     return user
 
@@ -214,10 +216,10 @@ def create_unit_user(user, unit, create, mark, submit, tag):
         tag=tag
     )
     unit_users.save()
-    user.email_user(
+    tasks.email_user(
+        user.username,
         'unit invitation',
-        'welcome to %s' % unit,
-        fail_silently=False
+        'welcome to %s' % unit
     )
 
 
@@ -409,14 +411,16 @@ def submission_create(request) -> HttpResponse:
             submission.user = request.user
             submission.assignment = request.assignment
             submission = form.save()
-            tasks.automatic_mark_and_feedback(submission)
-            AuditLog.objects.create(unit=request.unit, message="%s[%s] submitted %s[%s]" % (request.user, request.user.pk, submission, submission.pk))
+            tasks.automatic_mark_and_feedback.delay(submission.pk)
+            AuditLog.objects.create(date=datetime.now(pytz.UTC), unit=request.unit, message="%s[%s] submitted %s[%s]" % (request.user, request.user.pk, submission, submission.pk))
             return redirect(submission)
         else:
             for error in form.non_field_errors():
                 messages.error(request, error)
     else:
-        form = SubmissionForm()
+        form = SubmissionForm(initial={
+            'solution': request.assignment.template
+        })
 
     context = {
         'form': form,
