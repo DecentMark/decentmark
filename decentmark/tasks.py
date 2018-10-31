@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 
-from decentmark.models import Submission
+from decentmark.models import Submission, SubmissionStatus
 from decentmark.celery import app
 
 
@@ -10,12 +10,11 @@ from decentmark.celery import app
     ignore_result=True,
     autoretry_for=(Exception,),
     retry_backoff=True,
-    retry_jitter=True,
     acks_late=True,
 )
 def automatic_mark_and_feedback(self, submission_id):
     submission = Submission.objects.get(pk=submission_id)
-    submission.autostatus = 'P'
+    submission.autostatus = SubmissionStatus.PENDING.value
 
     global_var = {
         'STUDENT_SOLUTION': submission.solution,
@@ -28,9 +27,9 @@ def automatic_mark_and_feedback(self, submission_id):
     except SystemExit:
         pass
 
-    submission.autostatus = 'M'
     submission.automark = global_var['AUTOMARK']
     submission.autofeedback = global_var['AUTOFEEDBACK']
+    submission.autostatus = SubmissionStatus.MARKED.value
     submission.save()
 
 
@@ -40,7 +39,6 @@ def automatic_mark_and_feedback(self, submission_id):
     ignore_result=True,
     autoretry_for=(Exception,),
     retry_backoff=True,
-    retry_jitter=True,
     acks_late=True,
 )
 def email_user(self, username, subject, message):

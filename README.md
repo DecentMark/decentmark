@@ -8,8 +8,8 @@ Automatic grader for programming assignments.
 - python manage.py runserver --settings decentsite.local_settings
 
 ## Marking
-- install and setup RabbitMQ
-- sudo rabbitmq-server
+- Install and setup RabbitMQ
+- sudo rabbitmq-server -detached
 - celery -A decentmark worker -l info
 
 ## Testing
