@@ -9,7 +9,7 @@ Automatic grader for programming assignments.
 
 ## Marking
 - Install and setup RabbitMQ
-- sudo rabbitmq-server -detached
+- sudo rabbitmq-server
 - celery -A decentmark worker -l info
 
 ## Testing
