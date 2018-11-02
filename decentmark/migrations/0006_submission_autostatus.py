@@ -14,6 +14,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='submission',
             name='autostatus',
-            field=models.CharField(choices=[('U', 'UNMARKED'), ('P', 'PENDING'), ('M', 'MARKED'), ('T', 'TIMEDOUT')], default=decentmark.models.SubmissionStatus('U'), max_length=1),
+            field=models.CharField(choices=[('U', 'UNMARKED'), ('P', 'PENDING'), ('M', 'MARKED'), ('T', 'TIMEDOUT')], default='U', max_length=1),
         ),
     ]

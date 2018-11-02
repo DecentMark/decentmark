@@ -1,0 +1,39 @@
+version: '3'
+
+services:
+  db:
+    image: postgres
+  rabbit:
+    image: rabbitmq:3.7.8
+    hostname: rabbit
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=password
+  decentcelery:
+    build: .
+    command: celery -A decentmark worker -l info
+    environment:
+      - DJANGO_SETTINGS_MODULE=decentsite.local_settings
+    volumes:
+      - .:/opt/decentmark
+    links:
+      - rabbit
+    depends_on:
+      - rabbit
+  decentmark:
+    build: .
+    command: bash -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    environment:
+      - DJANGO_SETTINGS_MODULE=decentsite.local_settings
+    volumes:
+      - .:/opt/decentmark
+    ports:
+      - "80:8000"
+    links:
+      - rabbit
+      - decentcelery
+      - db
+    depends_on:
+      - rabbit
+      - decentcelery
+      - db

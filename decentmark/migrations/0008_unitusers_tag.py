@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('decentmark', '0008_auto_20181005_1514'),
+        ('decentmark', '0007_remove_assignment_attempts'),
     ]
 
     operations = [
