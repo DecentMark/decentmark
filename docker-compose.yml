@@ -31,9 +31,7 @@ services:
       - "80:8000"
     links:
       - rabbit
-      - decentcelery
       - db
     depends_on:
       - rabbit
-      - decentcelery
       - db
