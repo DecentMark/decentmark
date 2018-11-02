@@ -43,6 +43,5 @@
             {% render_field form.feedback class+="form-control" placeholder=form.feedback.label %}
         </div>
         <button type="submit" class="btn btn-success">Submit</button>
-        <a href="{% url 'decentmark:submission_view' assignment.id %}" class="btn btn-info" role="button" aria-pressed="true">Return to Marks</a>
     </form>
 {% endblock %}
